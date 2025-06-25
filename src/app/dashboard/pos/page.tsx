@@ -1,0 +1,18 @@
+// app/dashboard/pos/page.tsx
+import { getPosData } from '@/lib/actions/pos.actions';
+import { PosClient } from '@/components/pos/PosClient';
+
+// Ini adalah Server Component yang mengambil data awal
+export default async function PosPage() {
+  const { products, customers, error } = await getPosData();
+
+  if (error || !products || !customers) {
+    return <div className="p-8 text-center text-red-500">{error || 'Gagal memuat data. Pastikan ada produk dan pelanggan di database.'}</div>;
+  }
+
+  return (
+    <div className="p-4">
+      <PosClient products={products} customers={customers} />
+    </div>
+  );
+}

@@ -1,0 +1,223 @@
+// 1. Konfigurasi Koneksi Database dan Generator Prisma Client
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Mengambil URL dari file .env
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------------------------------------------
+// Tipe Data Enumerasi (Enum) untuk konsistensi
+// ---------------------------------------------
+enum Role {
+  ADMIN
+  CASHIER
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  DEBIT_CARD
+  CREDIT_CARD
+  QRIS
+}
+
+enum StockMovementType {
+  PURCHASE // Stok masuk dari pembelian
+  SALE     // Stok keluar karena penjualan
+  ADJUSTMENT // Penyesuaian manual (misal: stok opname)
+}
+
+
+// ---------------------------------------------
+// TABEL MASTER (Data Acuan Utama)
+// ---------------------------------------------
+
+// 1. Model untuk pengguna sistem
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String // Penting: Simpan password yang sudah di-hash!
+  role      Role     @default(CASHIER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi: Satu user bisa melakukan banyak penjualan
+  sales Sale[]
+
+  @@map("users")
+}
+
+// 2. Model untuk kategori produk
+model Category {
+  id        String   @id @default(cuid()) // <-- @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi: Satu kategori memiliki banyak produk
+  products Product[]
+
+  @@map("categories")
+}
+
+// 3. Model untuk data pemasok/supplier
+model Supplier {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  contactPerson String?
+  phone         String?
+  address       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relasi: Satu supplier bisa memiliki banyak order pembelian
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+// 4. Model untuk data pelanggan
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?  @unique
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi: Satu customer bisa memiliki banyak transaksi penjualan
+  sales Sale[]
+
+  @@map("customers")
+}
+
+// 5. Model untuk data produk
+model Product {
+  id             String    @id @default(cuid())
+  sku            String    @unique // Stock Keeping Unit, kode unik produk
+  name           String
+  description    String?
+  purchasePrice  Float // Harga beli dari supplier
+  sellingPrice   Float // Harga jual ke customer
+  stock          Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relasi: Satu produk milik satu kategori
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  // Relasi dengan tabel transaksi
+  saleItems         SaleItem[]
+  purchaseOrderItems PurchaseOrderItem[]
+  stockMovements    StockMovement[]
+
+  @@map("products")
+}
+
+
+// ---------------------------------------------
+// TABEL TRANSAKSI (Data Historis & Dinamis)
+// ---------------------------------------------
+
+// 6. Model untuk transaksi penjualan
+model Sale {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique @default(cuid()) // Nomor nota/invoice unik
+  saleDate      DateTime      @default(now())
+  totalAmount   Float
+  paymentMethod PaymentMethod
+
+  // Relasi: Satu penjualan dicatat oleh satu user (kasir)
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  // Relasi: Satu penjualan untuk satu customer
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  // Relasi: Satu penjualan memiliki banyak item barang
+  items SaleItem[]
+
+  @@map("sales")
+}
+
+// 7. Model untuk rincian item pada setiap transaksi penjualan
+model SaleItem {
+  id          String  @id @default(cuid())
+  quantity    Int
+  priceAtSale Float // Mencatat harga produk saat dijual
+
+  // Relasi: Item ini adalah bagian dari satu penjualan
+  sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  saleId String
+
+  // Relasi: Item ini merujuk ke satu produk
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@map("sale_items")
+}
+
+// 8. Model untuk order pembelian ke supplier
+model PurchaseOrder {
+  id        String      @id @default(cuid())
+  orderDate DateTime    @default(now())
+  status    OrderStatus @default(PENDING)
+  totalAmount Float
+
+  // Relasi: Order ini ditujukan ke satu supplier
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  supplierId String
+
+  // Relasi: Satu order pembelian memiliki banyak item barang
+  items PurchaseOrderItem[]
+
+  @@map("purchase_orders")
+}
+
+// 9. Model untuk rincian item pada setiap order pembelian
+model PurchaseOrderItem {
+  id              String  @id @default(cuid())
+  quantity        Int
+  priceAtPurchase Float // Mencatat harga dari supplier saat dibeli
+
+  // Relasi: Item ini adalah bagian dari satu order pembelian
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  purchaseOrderId String
+
+  // Relasi: Item ini merujuk ke satu produk
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@map("purchase_order_items")
+}
+
+// 10. Model untuk mencatat semua pergerakan stok (untuk audit)
+model StockMovement {
+  id             String            @id @default(cuid())
+  type           StockMovementType
+  quantityChange Int // Positif untuk stok masuk, negatif untuk stok keluar
+  reason         String? // Alasan, misal: "Stok Opname" atau "Barang Rusak"
+  movementDate   DateTime          @default(now())
+
+  // Relasi: Pergerakan stok ini milik satu produk
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  // Opsional: Link ke transaksi terkait untuk pelacakan
+  saleId          String?
+  purchaseOrderId String?
+
+  @@map("stock_movements")
+}
