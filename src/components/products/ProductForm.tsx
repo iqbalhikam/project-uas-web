@@ -15,7 +15,6 @@ import ProductSchema from '@/lib/schemas/product.schema';
 
 // Skema validasi yang sama dengan di backend
 
-
 interface ProductFormProps {
   categories: Category[];
   product?: Product; // product bersifat opsional, untuk mode edit

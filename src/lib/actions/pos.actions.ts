@@ -3,7 +3,9 @@
 // lib/actions/pos.actions.ts
 'use server';
 
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 
 // Aksi untuk mengambil data awal yang dibutuhkan halaman POS
@@ -24,6 +26,7 @@ export async function getPosData() {
 
 // Tipe data untuk item di keranjang
 type CartItem = {
+  
   id: string;
   name: string;
   price: number;
@@ -31,7 +34,19 @@ type CartItem = {
 };
 
 // Aksi untuk memproses transaksi penjualan
-export async function processSale(cartItems: CartItem[], customerId: string, totalAmount: number, paymentMethod: string) {
+export async function processSale(
+  cartItems: CartItem[], 
+  customerId: string, 
+  totalAmount: number, 
+  paymentMethod: string
+) {
+  // 3. Dapatkan sesi pengguna saat ini di server
+  const session = await getServerSession(authOptions);
+
+  // 4. Lakukan pengecekan jika tidak ada sesi (pengguna tidak login)
+  if (!session || !session.user?.id) {
+    return { error: 'Akses ditolak. Anda harus login.' };
+  }
   if (cartItems.length === 0) {
     return { error: 'Keranjang belanja kosong.' };
   }
@@ -47,7 +62,7 @@ export async function processSale(cartItems: CartItem[], customerId: string, tot
         data: {
           totalAmount,
           customerId,
-          userId: 'cmc8sxrkt0000b6q07wlnxjuh', // GANTI INI DENGAN ID USER YANG LOGIN - SEMENTARA COPY PASTE
+          userId: session.user.id, // GANTI INI DENGAN ID USER YANG LOGIN - SEMENTARA COPY PASTE
           paymentMethod: paymentMethod as any,
         },
       });
