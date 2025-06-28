@@ -33,7 +33,13 @@ export async function getDashboardStats() {
       prisma.sale.findMany({
         orderBy: { saleDate: 'desc' },
         take: 5,
-        include: { customer: true },
+        include: {
+          customer: {
+            select: {
+              name: true, // Hanya ambil kolom 'name' dari customer
+            },
+          },
+        },
       }),
     ]);
 

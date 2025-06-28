@@ -8,17 +8,26 @@ import ProductSchema from '../schemas/product.schema';
 
 // Skema validasi menggunakan Zod
 
-export async function getProducts() {
+export async function getProducts(page = 1, limit = 10) {
+  // Tambahkan parameter page & limit
   try {
-    const products = await prisma.product.findMany({
-      include: {
-        category: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-    return { products };
+    const skip = (page - 1) * limit; // Hitung data yang akan dilewati
+
+    const [products, totalProducts] = await prisma.$transaction([
+      prisma.product.findMany({
+        skip: skip,
+        take: limit, // Batasi jumlah data yang diambil
+        include: {
+          category: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      prisma.product.count(), // Hitung total produk untuk paginasi
+    ]);
+
+    return { products, totalProducts };
   } catch (error) {
     return { error: 'Gagal memuat produk' };
   }

@@ -1,11 +1,16 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCategories, getProducts } from '@/lib/actions/product.actions';
 import { ProductActions } from '@/components/products/ProductActions';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 // Halaman ini adalah Server Component
-export default async function ProductsPage() {
+export default async function ProductsPage({ searchParams }: { searchParams?: { page?: string } }) {
+  const currentPage = Number(searchParams?.page) || 1;
+  const limit = 10; // Tentukan batas per halaman
+
   // Ambil data di server
-  const { products } = await getProducts();
+  const { products, totalProducts } = await getProducts(currentPage, limit);
   const { categories } = await getCategories();
 
   // Format harga menjadi Rupiah
@@ -20,6 +25,8 @@ export default async function ProductsPage() {
   if (!categories) {
     return <div>Gagal memuat kategori. Pastikan Anda sudah membuat data kategori.</div>;
   }
+
+  const totalPages = Math.ceil((totalProducts || 0) / limit);
 
   return (
     <div className="p-4 md:p-6">
@@ -64,6 +71,21 @@ export default async function ProductsPage() {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Link href={`?page=${currentPage > 1 ? currentPage - 1 : 1}`}>
+          <Button variant="outline" size="sm" disabled={currentPage <= 1}>
+            Sebelumnya
+          </Button>
+        </Link>
+        <span className="text-sm">
+          Halaman {currentPage} dari {totalPages}
+        </span>
+        <Link href={`?page=${currentPage < totalPages ? currentPage + 1 : totalPages}`}>
+          <Button variant="outline" size="sm" disabled={currentPage >= totalPages}>
+            Selanjutnya
+          </Button>
+        </Link>
       </div>
     </div>
   );

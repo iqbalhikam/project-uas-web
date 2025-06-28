@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ShoppingCart, Package, Users, BarChart, Tag, Truck } from 'lucide-react';
+import { Home, ShoppingCart, Package, Users, BarChart, Tag, Truck, ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { UserNav } from './UserNav';
 
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/dashboard/products', label: 'Produk', icon: Package },
   { href: '/dashboard/categories', label: 'Kategori', icon: Tag },
   { href: '/dashboard/suppliers', label: 'Supplier', icon: Truck },
+  { href: '/dashboard/purchases', label: 'Order Pembelian', icon: ShoppingBag },
   { href: '/dashboard/users', label: 'Pengguna', icon: Users },
   { href: '/dashboard/reports/sales', label: 'Laporan', icon: BarChart },
 ];

@@ -1,7 +1,7 @@
 // components/pos/PosClient.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Product, Customer } from '@prisma/client';
 import { processSale } from '@/lib/actions/pos.actions';
 import { toast } from 'sonner';
@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Plus, Minus, ScanLine} from 'lucide-react';
 import CameraScanner from '@/components/scanner/CameraScanner'; // <-- Impor komponen scanner
+import { useDebounce } from '@/hooks/useDebounce';
 
 
 interface PosClientProps {
@@ -33,9 +34,12 @@ export function PosClient({ products, customers }: PosClientProps) {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<string>('');
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Debounce 300ms
+  const [filteredProducts, setFilteredProducts] = useState(products);
 
-  const filteredProducts = products.filter((product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
-
+  useEffect(() => {
+    setFilteredProducts(products.filter((product) => product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())));
+  }, [debouncedSearchTerm, products]);
   const addToCart = (product: Product) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === product.id);
