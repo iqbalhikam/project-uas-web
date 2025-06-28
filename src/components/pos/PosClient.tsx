@@ -10,7 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, Plus, Minus } from 'lucide-react';
+import { Search, Plus, Minus, ScanLine} from 'lucide-react';
+import CameraScanner from '@/components/scanner/CameraScanner'; // <-- Impor komponen scanner
+
 
 interface PosClientProps {
   products: Product[];
@@ -30,6 +32,7 @@ export function PosClient({ products, customers }: PosClientProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<string>('');
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
 
   const filteredProducts = products.filter((product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -80,10 +83,19 @@ export function PosClient({ products, customers }: PosClientProps) {
       error: (err) => err.message,
     });
   };
-
+  const handleScanSuccess = (scannedSku: string) => {
+    setIsScannerOpen(false); // Tutup scanner setelah berhasil
+    const product = products.find((p) => p.sku === scannedSku);
+    if (product) {
+      addToCart(product);
+      toast.success(`Produk "${product.name}" ditambahkan ke keranjang.`);
+    } else {
+      toast.error(`Produk dengan SKU "${scannedSku}" tidak ditemukan.`);
+    }
+  };
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-8rem)]">
-      
+      {isScannerOpen && <CameraScanner onScanSuccess={handleScanSuccess} onClose={() => setIsScannerOpen(false)} />}
       {/* Kolom Kiri: Daftar Produk */}
       <div className="lg:col-span-2 bg-white rounded-lg shadow">
         <div className="p-4 border-b">
@@ -91,6 +103,9 @@ export function PosClient({ products, customers }: PosClientProps) {
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Cari produk..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
+          <Button variant="outline" size="icon" onClick={() => setIsScannerOpen(true)}>
+            <ScanLine className="h-4 w-4" />
+          </Button>
         </div>
         <div className="p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto h-[calc(100%-4.5rem)]">
           {filteredProducts.map((product) => (
