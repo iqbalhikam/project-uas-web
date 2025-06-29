@@ -3,19 +3,20 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ShoppingCart, Package, Users, BarChart, Tag, Truck, ShoppingBag, AreaChart, Trophy } from 'lucide-react';
+import { Home, ShoppingCart, Package, Users, BarChart, Tag, Truck, ShoppingBag, AreaChart, Trophy, ClipboardCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-// import { UserNav } from './UserNav';
+import { UserNav } from './UserNav';
 import { useSession } from 'next-auth/react';
 
 // Daftar item navigasi
 const allNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home, roles: ['ADMIN', 'CASHIER'] },
-  { href: '/dashboard/pos', label: 'POS', icon: ShoppingCart, roles: ['ADMIN', 'CASHIER'] },
+  { href: '/dashboard/pos', label: 'Kasir', icon: ShoppingCart, roles: ['ADMIN', 'CASHIER'] },
   { href: '/dashboard/products', label: 'Produk', icon: Package, roles: ['ADMIN', 'CASHIER'] },
   { href: '/dashboard/categories', label: 'Kategori', icon: Tag, roles: ['ADMIN'] },
   { href: '/dashboard/suppliers', label: 'Supplier', icon: Truck, roles: ['ADMIN'] },
   { href: '/dashboard/purchases', label: 'Order Pembelian', icon: ShoppingBag, roles: ['ADMIN'] },
+  { href: '/dashboard/stock-adjustments', label: 'Stok Opname', icon: ClipboardCheck, roles: ['ADMIN'] },
   // Nanti kita bisa tambahkan fitur ini
   // { href: '/dashboard/stock-adjustments', label: 'Stok Opname', icon: ClipboardCheck, roles: ['ADMIN'] },
   { href: '/dashboard/users', label: 'Pengguna', icon: Users, roles: ['ADMIN'] },
@@ -32,9 +33,12 @@ export function Sidebar() {
 
   return (
     <aside className="w-64 bg-sidebar border-r p-4 flex-col hidden md:flex">
-      <div className='flex gap-2'>
+      <div className="flex gap-2">
         {/* <UserNav /> */}
         <h1 className="text-2xl font-bold mb-8">KasirApp </h1>
+        <div className=" flex justify-end w-full h-fit">
+          <UserNav />
+        </div>
       </div>
       <nav className="flex flex-col gap-2">
         {navItems.map((item) => {

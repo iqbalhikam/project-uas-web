@@ -45,7 +45,7 @@ export default async function ProfitReportPage({ searchParams }: { searchParams?
       </div>
 
       {/* Tabel Rincian per Produk */}
-      <Card className="bg-amber-100">
+      <Card>
         <CardHeader>
           <CardTitle>Rincian Keuntungan per Produk</CardTitle>
           <CardDescription>Menampilkan rincian keuntungan untuk setiap produk yang terjual dalam rentang tanggal yang dipilih.</CardDescription>

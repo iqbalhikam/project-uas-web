@@ -33,6 +33,24 @@ type CartItem = {
   quantity: number;
 };
 
+async function getGeneralCustomerId() {
+  let generalCustomer = await prisma.customer.findUnique({
+    where: { phone: '0000' }, // Kita gunakan nomor telepon unik sebagai penanda
+  });
+
+  // Jika tidak ada, buat baru
+  if (!generalCustomer) {
+    generalCustomer = await prisma.customer.create({
+      data: {
+        name: 'Pelanggan Umum',
+        phone: '0000', // Pastikan ini unik
+        address: 'N/A',
+      },
+    });
+  }
+  return generalCustomer.id;
+}
+
 // Aksi untuk memproses transaksi penjualan
 export async function processSale(
   cartItems: CartItem[], 
@@ -50,19 +68,19 @@ export async function processSale(
   if (cartItems.length === 0) {
     return { error: 'Keranjang belanja kosong.' };
   }
-  if (!customerId) {
-    return { error: 'Pelanggan belum dipilih.' };
-  }
 
   try {
+    // Gunakan transaksi untuk memastikan semua operasi berhasil atau gagal bersamaan
+    const finalCustomerId = customerId || (await getGeneralCustomerId());
+
     // Gunakan transaksi untuk memastikan semua operasi berhasil atau gagal bersamaan
     const sale = await prisma.$transaction(async (tx) => {
       // 1. Buat catatan Penjualan (Sale) utama
       const newSale = await tx.sale.create({
         data: {
           totalAmount,
-          customerId,
-          userId: session.user.id, // GANTI INI DENGAN ID USER YANG LOGIN - SEMENTARA COPY PASTE
+          customerId: finalCustomerId, // Gunakan ID final di sini
+          userId: session.user.id,
           paymentMethod: paymentMethod as any,
         },
       });

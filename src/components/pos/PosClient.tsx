@@ -10,10 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, Plus, Minus, ScanLine} from 'lucide-react';
+import { Search, Plus, Minus, ScanLine } from 'lucide-react';
 import CameraScanner from '@/components/scanner/CameraScanner'; // <-- Impor komponen scanner
 import { useDebounce } from '@/hooks/useDebounce';
-
 
 interface PosClientProps {
   products: Product[];
@@ -75,18 +74,28 @@ export function PosClient({ products, customers }: PosClientProps) {
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
+    // Cek jika metode pembayaran belum dipilih
+    if (!paymentMethod) {
+      toast.error('Metode pembayaran harus dipilih.');
+      return;
+    }
+
+    // Kirim selectedCustomerId (bisa jadi string kosong) ke backend
     const promise = processSale(cart, selectedCustomerId, totalAmount, paymentMethod);
     toast.promise(promise, {
       loading: 'Memproses transaksi...',
       success: (res) => {
         if (res.error) throw new Error(res.error);
+        // Reset state setelah berhasil
         setCart([]);
         setSelectedCustomerId('');
+        // Jangan reset metode pembayaran, karena kemungkinan sama untuk transaksi berikutnya
         return res.success;
       },
       error: (err) => err.message,
     });
   };
+
   const handleScanSuccess = (scannedSku: string) => {
     setIsScannerOpen(false); // Tutup scanner setelah berhasil
     const product = products.find((p) => p.sku === scannedSku);
@@ -101,8 +110,8 @@ export function PosClient({ products, customers }: PosClientProps) {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-8rem)]">
       {isScannerOpen && <CameraScanner onScanSuccess={handleScanSuccess} onClose={() => setIsScannerOpen(false)} />}
       {/* Kolom Kiri: Daftar Produk */}
-      <div className="lg:col-span-2 bg-white rounded-lg shadow">
-        <div className="p-4 border-b">
+      <div className="lg:col-span-2 bg-card rounded-lg shadow">
+        <div className="p-4 border-b ">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Cari produk..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
@@ -113,7 +122,7 @@ export function PosClient({ products, customers }: PosClientProps) {
         </div>
         <div className="p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto h-[calc(100%-4.5rem)]">
           {filteredProducts.map((product) => (
-            <Card key={product.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => addToCart(product)}>
+            <Card key={product.id} className="cursor-pointer hover:shadow-lg transition-shadow max-h-[50%]" onClick={() => addToCart(product)}>
               <CardContent className="p-4 text-center">
                 <p className="font-semibold text-sm">{product.name}</p>
                 <p className="text-xs text-muted-foreground">Stok: {product.stock}</p>
@@ -124,28 +133,30 @@ export function PosClient({ products, customers }: PosClientProps) {
       </div>
 
       {/* Kolom Kanan: Keranjang Belanja */}
-      <div className="bg-white rounded-lg shadow flex flex-col">
-        <CardHeader>
+      <div className="bg-card rounded-lg shadow flex flex-col">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3">
           <CardTitle>Keranjang</CardTitle>
         </CardHeader>
         <CardContent className="flex-grow overflow-y-auto">
           <div className="mb-4">
             <Select onValueChange={setSelectedCustomerId} value={selectedCustomerId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Pilih Pelanggan" />
+              <SelectTrigger className='w-full'>
+                <SelectValue placeholder="Pelanggan Umum (Default)" />
               </SelectTrigger>
               <SelectContent>
-                {customers.map((customer) => (
-                  <SelectItem key={customer.id} value={customer.id}>
-                    {customer.name}
-                  </SelectItem>
-                ))}
+                {customers
+                  .filter((c) => c.name !== 'Pelanggan Umum')
+                  .map((customer) => (
+                    <SelectItem key={customer.id} value={customer.id}>
+                      {customer.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
           <div className="mb-4">
             <Select onValueChange={setPaymentMethod} value={paymentMethod}>
-              <SelectTrigger>
+              <SelectTrigger className='w-full'>
                 <SelectValue placeholder="Pilih Metode Pembayaran" />
               </SelectTrigger>
               <SelectContent>
@@ -190,7 +201,7 @@ export function PosClient({ products, customers }: PosClientProps) {
             <span>Total</span>
             <span>{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalAmount)}</span>
           </div>
-          <Button className="w-full" size="lg" onClick={handleCheckout} disabled={cart.length === 0 || !selectedCustomerId}>
+          <Button className="w-full" size="lg" onClick={handleCheckout} disabled={cart.length === 0}>
             Bayar
           </Button>
         </div>
