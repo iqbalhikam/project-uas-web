@@ -1,72 +1,91 @@
 // src/components/scanner/CameraScanner.tsx
 'use client';
 
-// Impor useRef dan useEffect
-import React, { useRef, useEffect } from 'react';
-import { useZxing } from 'react-zxing';
-// import { Result } from '@zxing/library';
+import React, { useEffect, useRef } from 'react';
+import { Html5QrcodeScanner, QrcodeErrorCallback, QrcodeSuccessCallback } from 'html5-qrcode';
 import { toast } from 'sonner';
 
+// ... (Interface dan konstanta tetap sama)
 interface CameraScannerProps {
   onScanSuccess: (result: string) => void;
   onClose: () => void;
 }
+const qrcodeRegionId = 'html5-qrcode-reader';
 
 export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerProps) {
-  // 1. Buat sebuah "kunci" menggunakan useRef. Default-nya 'false' (belum scan).
   const hasScannedRef = useRef(false);
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  const { ref } = useZxing({
-    constraints: { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
-    timeBetweenDecodingAttempts: 100,
-    onDecodeResult(result) {
-      // 2. Sebelum melakukan apapun, cek apakah kuncinya sudah aktif.
-      // Jika ya, langsung hentikan fungsi.
-      if (hasScannedRef.current) {
-        return;
-      }
-
-      // 3. Jika belum, SEGERA aktifkan kuncinya.
-      // Perubahan ref terjadi seketika.
-      hasScannedRef.current = true;
-
-      // 4. Baru jalankan logika sukses Anda.
-      // Dijamin bagian ini hanya akan berjalan SATU KALI per sesi scanner.
-      const scanResult = result.getText();
-      toast.success('Barcode berhasil dipindai!');
-      onScanSuccess(scanResult);
-    },
-
-    onError(error: unknown) {
-      if (hasScannedRef.current) {
-        return; // Abaikan error jika sudah berhasil scan
-      }
-      if (error instanceof Error) {
-        if (error.name !== 'NotFoundException') {
-          console.error('Terjadi error tak terduga saat memindai:', error);
-          toast.error(`Error: ${error.message}`);
-        }
-      } else {
-        console.error('Terjadi error yang tidak diketahui:', error);
-        toast.error('Terjadi error yang tidak diketahui.');
-      }
-    },
-  });
-
-  // 5. [PENTING] Pastikan kunci di-reset saat komponen ditutup/di-unmount.
-  // Ini agar saat scanner dibuka lagi di lain waktu, ia siap untuk scan baru.
   useEffect(() => {
+    const successCallback: QrcodeSuccessCallback = (decodedText) => {
+      if (hasScannedRef.current) return;
+      hasScannedRef.current = true;
+      toast.success('Barcode berhasil dipindai!');
+      onScanSuccess(decodedText);
+    };
+
+    const errorCallback: QrcodeErrorCallback = () => {
+      // Abaikan
+    };
+
+    // --- KONFIGURASI SUPER CEPAT ---
+    const config = {
+      // 1. Keseimbangan FPS yang baik dengan resolusi tinggi
+      fps: 25,
+
+      // 2. [OPTIMASI] qrbox dibuat dinamis
+      qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+        // Tentukan ukuran kotak sebagai 70% dari dimensi terkecil (lebar atau tinggi)
+        // Ini memastikan kotak selalu pas dan berbentuk persegi
+        const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.7;
+        return {
+          width: size,
+          height: size,
+        };
+      },
+
+      rememberLastUsedCamera: true,
+      supportedScanTypes: [],
+
+      // 3. [OPTIMASI TERPENTING] Nonaktifkan pengecekan cermin
+      disableFlip: true,
+
+      videoConstraints: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 1280 },
+        advanced: [{ focusMode: 'continuous' }],
+      },
+    } as never;
+
+    
+    // ... (sisa kode useEffect tetap sama)
+    try {
+      scannerRef.current = new Html5QrcodeScanner(qrcodeRegionId, config, false);
+      scannerRef.current.render(successCallback, errorCallback);
+      
+    } catch (err) {
+      console.error('Gagal memulai Html5QrcodeScanner:', err);
+      toast.error('Gagal memulai kamera. Pastikan izin telah diberikan.');
+    }
+
     return () => {
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch((error) => {
+          console.error('Gagal membersihkan scanner.', error);
+        });
+      }
       hasScannedRef.current = false;
     };
-  }, []); // Array dependensi kosong agar cleanup ini hanya berjalan saat unmount.
+  }, [onScanSuccess]);
 
+  // JSX tidak perlu diubah
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ position: 'relative', width: '90%', maxWidth: '600px' }}>
-        <p style={{ color: 'white', textAlign: 'center', marginBottom: '1rem' }}>Arahkan Kamera ke Barcode</p>
-        <video ref={ref} style={{ width: '100%', border: '2px solid white', borderRadius: '8px' }} />
-        <button onClick={onClose} style={{ position: 'absolute', top: '-40px', right: '0', color: 'white', background: 'transparent', fontSize: '2rem', border: 'none', cursor: 'pointer' }}>
+      <div style={{ position: 'relative', width: '90%', maxWidth: '600px', background: 'white', padding: '20px', borderRadius: '8px' }}>
+        <p style={{ color: 'black', textAlign: 'center', marginBottom: '1rem', fontWeight: 'bold' }}>Arahkan Kamera ke QR Code</p>
+        <div id={qrcodeRegionId} style={{ minHeight: '250px' }} />
+        <button onClick={onClose} style={{ position: 'absolute', top: '-5px', right: '10px', color: 'black', background: 'transparent', fontSize: '2.5rem', border: 'none', cursor: 'pointer' }}>
           &times;
         </button>
       </div>
