@@ -4,12 +4,13 @@ import { ProductActions } from '@/components/products/ProductActions';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
+type ProductsPageProps = {
+  searchParams?: {
+    page?: string;
+  };
+};
 // Halaman ini adalah Server Component
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams?: { page: string }; // Tipe didefinisikan di sini
-}) {
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const currentPage = Number(searchParams?.page) || 1;
   const limit = 10; // Tentukan batas per halaman
 

@@ -5,6 +5,13 @@ import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 
+type ProfitReportPageProps = {
+  searchParams?: {
+    from?: string;
+    to?: string;
+  };
+};
+
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -12,11 +19,7 @@ const formatCurrency = (amount: number) =>
     minimumFractionDigits: 0,
   }).format(amount);
 
-export default async function ProfitReportPage({
-  searchParams,
-}: {
-  searchParams?: { from?: string; to?: string }; // Perbaiki tipe di sini
-}) {
+export default async function ProfitReportPage({ searchParams }: ProfitReportPageProps) {
   const from = searchParams?.from ? new Date(searchParams.from) : new Date(new Date().setMonth(new Date().getMonth() - 1));
   const to = searchParams?.to ? new Date(searchParams.to) : new Date();
 

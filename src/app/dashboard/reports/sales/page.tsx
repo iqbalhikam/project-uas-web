@@ -1,4 +1,3 @@
-
 import { getSalesByDateRange } from '@/lib/actions/report.actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,12 +8,13 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 const formatCurrency = (amount: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
-
-export default async function SalesReportPage({
-  searchParams,
-}: {
-  searchParams?: { from?: string; to?: string }; // Perbaiki tipe di sini
-}) {
+type SalesReportPageProps = {
+  searchParams?: {
+    from?: string;
+    to?: string;
+  };
+};
+export default async function SalesReportPage({ searchParams }: SalesReportPageProps) {
   const from = searchParams?.from ? new Date(searchParams.from) : undefined;
   const to = searchParams?.to ? new Date(searchParams.to) : undefined;
 
