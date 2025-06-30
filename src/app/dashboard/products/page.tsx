@@ -1,31 +1,33 @@
+// src/app/dashboard/products/page.tsx (FINAL FIX)
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCategories, getProducts } from '@/lib/actions/product.actions';
 import { ProductActions } from '@/components/products/ProductActions';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-type ProductsPageProps = {
-  searchParams?: {
-    page?: Promise<{ page: number; limit: number }>;
-  };
+// Definisikan tipe props sesuai standar Next.js 15
+// Perhatikan bahwa searchParams sekarang adalah sebuah Promise
+interface ProductsPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(amount);
 };
-// Halaman ini adalah Server Component
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const currentPage = await Number(searchParams?.page) || 1;
-  const limit = 1; // Tentukan batas per halaman
 
-  // ... (sisa kode tidak berubah)
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  // "Buka" promise untuk mendapatkan objek searchParams yang sebenarnya
+  const currentSearchParams = await searchParams;
+  const currentPage = Number(currentSearchParams?.page) || 1;
+  const limit = 1;
+
   const { products, totalProducts } = await getProducts(currentPage, limit);
   const { categories } = await getCategories();
-
-  // Format harga menjadi Rupiah
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
 
   if (!categories) {
     return <div>Gagal memuat kategori. Pastikan Anda sudah membuat data kategori.</div>;
@@ -37,11 +39,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     <div className="p-4 md:p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">Manajemen Produk</h1>
-        {/* Tombol Tambah Produk kini ada di dalam ProductActions */}
         <ProductActions categories={categories} />
       </div>
 
-      <div className="rounded-md border bg-card">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -77,6 +78,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 py-4">
         <Link href={`?page=${currentPage > 1 ? currentPage - 1 : 1}`}>
           <Button variant="outline" size="sm" disabled={currentPage <= 1}>
