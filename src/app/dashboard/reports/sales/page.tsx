@@ -10,13 +10,14 @@ import { id } from 'date-fns/locale';
 const formatCurrency = (amount: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
 type SalesReportPageProps = {
   searchParams?: {
-    from?: string;
-    to?: string;
+    from?: Promise<{ [key: string]: string | string[] | undefined }>;
+    to?: Promise<{ [key: string]: string | string[] | undefined }>;
   };
 };
 export default async function SalesReportPage({ searchParams }: SalesReportPageProps) {
-  const from = searchParams?.from ? new Date(searchParams.from) : undefined;
-  const to = searchParams?.to ? new Date(searchParams.to) : undefined;
+  const currentSearchParams = await searchParams;
+  const from = currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : undefined;
+  const to = currentSearchParams?.to ? new Date(String(currentSearchParams.to)) : undefined;
 
   // ... (sisa kode tidak berubah)
   const dateFrom = from || new Date(new Date().setMonth(new Date().getMonth() - 1));
