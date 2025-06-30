@@ -6,10 +6,8 @@ import { StatCard } from '@/components/dashboard/StatCard';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 
 type ProfitReportPageProps = {
-  searchParams: {
-    from: Promise<{ [key: string]: string | string[] | undefined }>;
-    to: Promise<{ [key: string]: string | string[] | undefined }>;
-  };
+  // params tidak digunakan di halaman ini, tapi searchParams iya
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 const formatCurrency = (amount: number) =>
@@ -22,8 +20,8 @@ const formatCurrency = (amount: number) =>
 export default async function ProfitReportPage({ searchParams }: ProfitReportPageProps) {
   const currentSearchParams = await searchParams;
 
-  const from = await currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : new Date(new Date().setMonth(new Date().getMonth() - 1));
-  const to = await currentSearchParams?.to ? new Date(String(currentSearchParams.from)) : new Date();
+  const from = currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+  const to = currentSearchParams?.to ? new Date(String(currentSearchParams.from)) : new Date();
 
   const report = await getProfitReport(from, to);
 
