@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 
 type ProductsPageProps = {
   searchParams?: {
-    page?: {slug: string};
+    page?: Promise<{ page: number; limit: number }>;
   };
 };
 // Halaman ini adalah Server Component
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const currentPage = Number(searchParams?.page) || 1;
+  const currentPage = await Number(searchParams?.page) || 1;
   const limit = 1; // Tentukan batas per halaman
 
   // ... (sisa kode tidak berubah)
