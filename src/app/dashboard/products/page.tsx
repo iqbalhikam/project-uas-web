@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 
 type ProductsPageProps = {
   searchParams?: {
-    page?: {[key: string]: string | string[] | undefined};
+    page?: Promise<{ rcdId: string }>;
   };
 };
 // Halaman ini adalah Server Component
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const currentPage = Number(searchParams?.page) || 1;
+  const currentPage = Number(searchParams?.page);
   const limit = 10; // Tentukan batas per halaman
 
   // ... (sisa kode tidak berubah)
