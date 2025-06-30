@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { UserCreateSchema, UserUpdateSchema } from '@/lib/schemas/user.schema';
 import bcrypt from 'bcrypt';
 import { getServerSession } from 'next-auth'; // <-- Import getServerSession
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // <-- Import authOptions
+import { authOptions } from '../auth';
 
 // Fungsi helper untuk mendapatkan sesi dan mengecek role admin
 async function verifyAdmin() {

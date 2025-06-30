@@ -3,10 +3,10 @@
 // lib/actions/pos.actions.ts
 'use server';
 
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { authOptions } from '../auth';
 
 // Aksi untuk mengambil data awal yang dibutuhkan halaman POS
 export async function getPosData() {

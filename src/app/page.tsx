@@ -1,10 +1,10 @@
 // Lokasi: src/app/page.tsx
 
+import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
 
 // PENTING: Impor authOptions dari lokasi yang benar
-import { authOptions } from './api/auth/[...nextauth]/route';
 
 export default async function RootPage() {
   // 1. Dapatkan sesi pengguna di sisi server menggunakan NextAuth.js
