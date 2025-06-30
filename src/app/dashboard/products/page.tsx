@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams?: { page?: string }; // Tipe didefinisikan di sini
+  searchParams?: { page: string }; // Tipe didefinisikan di sini
 }) {
   const currentPage = Number(searchParams?.page) || 1;
   const limit = 10; // Tentukan batas per halaman
