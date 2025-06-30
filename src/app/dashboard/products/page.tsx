@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 type ProductsPageProps = {
-  searchParams?: {
-    page?: string;
+  searchParams: {
+    page: string;
   };
 };
 // Halaman ini adalah Server Component
