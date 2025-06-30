@@ -7,8 +7,8 @@ import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 
 type ProfitReportPageProps = {
   searchParams?: {
-    from?: string;
-    to?: string;
+    from?: Promise<{ [key: string]: string | string[] | undefined }>;
+    to?: Promise<{ [key: string]: string | string[] | undefined }>;
   };
 };
 
@@ -20,8 +20,10 @@ const formatCurrency = (amount: number) =>
   }).format(amount);
 
 export default async function ProfitReportPage({ searchParams }: ProfitReportPageProps) {
-  const from = searchParams?.from ? new Date(searchParams.from) : new Date(new Date().setMonth(new Date().getMonth() - 1));
-  const to = searchParams?.to ? new Date(searchParams.to) : new Date();
+  const currentSearchParams = await searchParams;
+
+  const from = currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+  const to = currentSearchParams?.to ? new Date(String(currentSearchParams.from)) : new Date();
 
   const report = await getProfitReport(from, to);
 
