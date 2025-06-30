@@ -4,11 +4,15 @@ import { ProductActions } from '@/components/products/ProductActions';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-type Params = Promise<{ rcdId: string }>;
+type ProductsPageProps = {
+  searchParams?: {
+    page?: {slug: string};
+  };
+};
 // Halaman ini adalah Server Component
-export default async function ProductsPage(searchParams : {params: Params}) {
-  const currentPage = Number(searchParams) || 1;
-  const limit = 10; // Tentukan batas per halaman
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const currentPage = Number(searchParams?.page) || 1;
+  const limit = 1; // Tentukan batas per halaman
 
   // ... (sisa kode tidak berubah)
   const { products, totalProducts } = await getProducts(currentPage, limit);
