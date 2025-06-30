@@ -22,7 +22,7 @@ const formatCurrency = (amount: number) =>
 export default async function ProfitReportPage({ searchParams }: ProfitReportPageProps) {
   const currentSearchParams = await searchParams;
 
-  const from = currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : new Date(new Date().setMonth(new Date().getMonth() - 1));
+  const from = await currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : new Date(new Date().setMonth(new Date().getMonth() - 1));
   const to = await currentSearchParams?.to ? new Date(String(currentSearchParams.from)) : new Date();
 
   const report = await getProfitReport(from, to);
