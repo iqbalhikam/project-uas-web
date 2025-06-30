@@ -7,8 +7,8 @@ import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 
 type ProfitReportPageProps = {
   searchParams?: {
-    from?: { [key: string]: string | string[] | undefined };
-    to?: { [key: string]: string | string[] | undefined };
+    from: Promise<{ [key: string]: string | string[] | undefined }>;
+    to: Promise<{ [key: string]: string | string[] | undefined }>;
   };
 };
 
