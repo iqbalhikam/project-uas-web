@@ -9,10 +9,8 @@ import { id } from 'date-fns/locale';
 
 const formatCurrency = (amount: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
 type SalesReportPageProps = {
-  searchParams?: {
-    from?: Promise<{ [key: string]: string | string[] | undefined }>;
-    to?: Promise<{ [key: string]: string | string[] | undefined }>;
-  };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+    
 };
 export default async function SalesReportPage({ searchParams }: SalesReportPageProps) {
   const currentSearchParams = await searchParams;
