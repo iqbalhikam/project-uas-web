@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// app/dashboard/reports/sales/page.tsx
+
 import { getSalesByDateRange } from '@/lib/actions/report.actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DateRangePicker } from '@/components/ui/date-range-picker'; // Asumsikan Anda sudah punya komponen ini
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { format } from 'date-fns';
@@ -11,15 +10,19 @@ import { id } from 'date-fns/locale';
 
 const formatCurrency = (amount: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
 
-export default async function SalesReportPage({ searchParams }: { searchParams?: { from?: string; to?: string } }) {
+export default async function SalesReportPage({
+  searchParams,
+}: {
+  searchParams?: { from?: string; to?: string }; // Perbaiki tipe di sini
+}) {
   const from = searchParams?.from ? new Date(searchParams.from) : undefined;
   const to = searchParams?.to ? new Date(searchParams.to) : undefined;
 
-  // Set default ke 1 bulan terakhir jika tidak ada parameter
+  // ... (sisa kode tidak berubah)
   const dateFrom = from || new Date(new Date().setMonth(new Date().getMonth() - 1));
   const dateTo = to || new Date();
 
-  const { sales, error } = await getSalesByDateRange(dateFrom, dateTo);
+  const { sales } = await getSalesByDateRange(dateFrom, dateTo);
 
   return (
     <div className="p-4 md:p-6 flex flex-col gap-4">
@@ -38,7 +41,6 @@ export default async function SalesReportPage({ searchParams }: { searchParams?:
           </a>
         </div>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Hasil Laporan</CardTitle>

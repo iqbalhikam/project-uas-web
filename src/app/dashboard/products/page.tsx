@@ -5,11 +5,15 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 // Halaman ini adalah Server Component
-export default async function ProductsPage({ searchParams }: { searchParams?: { page?: string } }) {
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams?: { page?: string }; // Tipe didefinisikan di sini
+}) {
   const currentPage = Number(searchParams?.page) || 1;
   const limit = 10; // Tentukan batas per halaman
 
-  // Ambil data di server
+  // ... (sisa kode tidak berubah)
   const { products, totalProducts } = await getProducts(currentPage, limit);
   const { categories } = await getCategories();
 

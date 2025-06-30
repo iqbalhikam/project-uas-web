@@ -1,5 +1,3 @@
-// src/app/dashboard/reports/profit/page.tsx
-
 import { getProfitReport } from '@/lib/actions/report.actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -14,12 +12,17 @@ const formatCurrency = (amount: number) =>
     minimumFractionDigits: 0,
   }).format(amount);
 
-export default async function ProfitReportPage({ searchParams }: { searchParams?: { from?: string; to?: string } }) {
+export default async function ProfitReportPage({
+  searchParams,
+}: {
+  searchParams?: { from?: string; to?: string }; // Perbaiki tipe di sini
+}) {
   const from = searchParams?.from ? new Date(searchParams.from) : new Date(new Date().setMonth(new Date().getMonth() - 1));
   const to = searchParams?.to ? new Date(searchParams.to) : new Date();
 
   const report = await getProfitReport(from, to);
 
+  // ... (sisa kode tidak berubah)
   if (report.error) {
     return <div className="p-8 text-red-500">{report.error}</div>;
   }
@@ -36,14 +39,12 @@ export default async function ProfitReportPage({ searchParams }: { searchParams?
         </div>
         <DateRangePicker />
       </div>
-
       {/* Kartu Statistik Ringkasan */}
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard title="Total Pendapatan" value={formatCurrency(totalRevenue || 0)} icon={TrendingUp} />
         <StatCard title="Total Modal (HPP)" value={formatCurrency(totalCostOfGoods || 0)} icon={TrendingDown} />
         <StatCard title="Laba Kotor" value={formatCurrency(totalProfit || 0)} icon={DollarSign} />
       </div>
-
       {/* Tabel Rincian per Produk */}
       <Card>
         <CardHeader>
