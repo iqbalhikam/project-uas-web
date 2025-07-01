@@ -24,7 +24,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   // "Buka" promise untuk mendapatkan objek searchParams yang sebenarnya
   const currentSearchParams = await searchParams;
   const currentPage = Number(currentSearchParams?.page) || 1;
-  const limit = 1;
+  const limit = 10;
 
   const { products, totalProducts } = await getProducts(currentPage, limit);
   const { categories } = await getCategories();
