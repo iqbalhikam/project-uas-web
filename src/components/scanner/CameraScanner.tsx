@@ -19,7 +19,10 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
       const size = Math.max(100, Math.min(vw, vh) * 0.7); // minimal 100px
       return { width: size, height: size };
     },
-    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+    supportedScanTypes: [
+      Html5QrcodeScanType.SCAN_TYPE_CAMERA,
+      Html5QrcodeScanType.SCAN_TYPE_FILE,
+    ],
     disableFlip: true,
     formatsToSupport: [
       Html5QrcodeSupportedFormats.QR_CODE,
