@@ -52,8 +52,8 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
 
       videoConstraints: {
         facingMode: 'environment',
-        width: { ideal: 1280 },
-        height: { ideal: 1280 },
+        width: { ideal: 300 },
+        height: { ideal: 300 },
         advanced: [{ focusMode: 'continuous' }],
       },
     } as never;
