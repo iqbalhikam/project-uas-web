@@ -34,13 +34,13 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
       fps: 25,
 
       // 2. [OPTIMASI] qrbox dibuat dinamis
-      qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+      qrbox: () => {
         // Tentukan ukuran kotak sebagai 70% dari dimensi terkecil (lebar atau tinggi)
         // Ini memastikan kotak selalu pas dan berbentuk persegi
-        const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.7;
+        // const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.7;
         return {
-          width: size,
-          height: size,
+          width: 300,
+          height: 300,
         };
       },
 
