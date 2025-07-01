@@ -31,7 +31,7 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
     // --- KONFIGURASI SUPER CEPAT ---
     const config = {
       // 1. Keseimbangan FPS yang baik dengan resolusi tinggi
-      fps: 25,
+      fps: 130,
 
       // 2. [OPTIMASI] qrbox dibuat dinamis
       qrbox: () => {
