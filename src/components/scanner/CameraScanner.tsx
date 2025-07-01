@@ -1,4 +1,4 @@
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
@@ -13,6 +13,21 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const hasScannedRef = useRef(false);
 
+  const config = {
+    fps: 25,
+    qrbox: (vw: number, vh: number) => {
+      const size = Math.max(100, Math.min(vw, vh) * 0.7); // minimal 100px
+      return { width: size, height: size };
+    },
+    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+    disableFlip: true,
+    formatsToSupport: [
+      Html5QrcodeSupportedFormats.QR_CODE,
+      Html5QrcodeSupportedFormats.EAN_13, // Barcode produk ritel paling umum
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.CODE_128, // Barcode umum lainnya
+    ],
+  };
   useEffect(() => {
     const qrCode = new Html5Qrcode(qrcodeRegionId);
     html5QrCodeRef.current = qrCode;
@@ -20,14 +35,7 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
     qrCode
       .start(
         { facingMode: 'environment' },
-        {
-          fps: 25,
-          qrbox: (vw, vh) => {
-            const size = Math.max(100, Math.min(vw, vh) * 0.7); // minimal 100px
-            return { width: size, height: size };
-          },
-          disableFlip: true,
-        },
+        config,
         (decodedText) => {
           if (hasScannedRef.current) return;
           hasScannedRef.current = true;
