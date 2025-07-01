@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { ScanLine } from 'lucide-react';
+import CameraScanner from '../scanner/CameraScanner';
+
+
 
 // Impor dinamis agar ssr:false
-const CameraScanner = dynamic(() => import('@/components/scanner/CameraScanner'), { ssr: false });
+// const CameraScanner = dynamic(() => import('@/components/scanner/CameraScanner'), { ssr: false });
 
 interface ProductScannerProps {
   onScan: (sku: string) => void;

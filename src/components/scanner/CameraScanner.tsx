@@ -1,3 +1,5 @@
+'use client';
+
 import { Html5Qrcode, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
@@ -10,6 +12,7 @@ interface CameraScannerProps {
 const qrcodeRegionId = 'html5-qrcode-reader';
 
 export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerProps) {
+  
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const hasScannedRef = useRef(false);
 
@@ -19,10 +22,7 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
       const size = Math.max(100, Math.min(vw, vh) * 0.7); // minimal 100px
       return { width: size, height: size };
     },
-    supportedScanTypes: [
-      Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-      Html5QrcodeScanType.SCAN_TYPE_FILE,
-    ],
+    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA, Html5QrcodeScanType.SCAN_TYPE_FILE],
     disableFlip: true,
     formatsToSupport: [
       Html5QrcodeSupportedFormats.QR_CODE,
@@ -43,10 +43,16 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
           if (hasScannedRef.current) return;
           hasScannedRef.current = true;
           toast.success('Barcode berhasil dipindai!');
-          qrCode.stop().then(() => {
+
+          
+          if (qrCode) {
             onScanSuccess(decodedText);
-          });
+            qrCode.stop() // hentikan streaming
+              .catch(() => {}) // abaikan error kalau sudah berhenti
+              .finally(() => qrCode.clear()); // bersihkan elemen DOM
+          }
         },
+
         () => {}
       )
       .catch((err) => {
