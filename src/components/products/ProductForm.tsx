@@ -1,7 +1,5 @@
-// src/components/products/ProductForm.tsx
 'use client';
 
-import { useState } from 'react'; // <-- Impor useState
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -14,8 +12,8 @@ import { createProduct, updateProduct } from '@/lib/actions/product.actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import ProductSchema from '@/lib/schemas/product.schema';
-import { ScanLine } from 'lucide-react'; // <-- Impor ikon ScanLine
-import CameraScanner from '@/components/scanner/CameraScanner'; // <-- Impor komponen scanner
+import { ProductScanner } from './ProductScanner'; // <-- Impor komponen scanner yang sudah diisolasi
+
 interface ProductFormProps {
   categories: Category[];
   product?: Product;
@@ -24,7 +22,6 @@ interface ProductFormProps {
 
 export function ProductForm({ categories, product, onClose }: ProductFormProps) {
   const router = useRouter();
-  const [isScannerOpen, setIsScannerOpen] = useState(false); // <-- State untuk scanner
 
   const form = useForm<z.infer<typeof ProductSchema>>({
     resolver: zodResolver(ProductSchema),
@@ -39,16 +36,20 @@ export function ProductForm({ categories, product, onClose }: ProductFormProps) 
     },
   });
 
-  // Fungsi untuk menangani hasil scan
-  const handleScanSuccess = (scannedSku: string) => {
-    form.setValue('sku', scannedSku, { shouldValidate: true }); // <-- Set nilai field SKU
-    setIsScannerOpen(false);
+  // Fungsi callback ini akan menerima hasil pindaian dari komponen ProductScanner
+  const handleScan = (scannedSku: string) => {
+    // Mengatur nilai field 'sku' di dalam form
+    form.setValue('sku', scannedSku, { shouldValidate: true });
+    toast.info(`SKU diatur ke: ${scannedSku}`);
   };
 
   const onSubmit = async (values: z.infer<typeof ProductSchema>) => {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, String(value));
+      // Pastikan nilai tidak null/undefined sebelum di-append
+      if (value !== null && value !== undefined) {
+        formData.append(key, String(value));
+      }
     });
 
     const promise = product ? updateProduct(product.id, formData) : createProduct(formData);
@@ -61,7 +62,7 @@ export function ProductForm({ categories, product, onClose }: ProductFormProps) 
         }
         form.reset();
         onClose();
-        router.refresh();
+        router.refresh(); // Memuat ulang data di halaman produk
         return res.message;
       },
       error: (err) => err.message,
@@ -69,127 +70,118 @@ export function ProductForm({ categories, product, onClose }: ProductFormProps) 
   };
 
   return (
-    <>
-      {isScannerOpen && <CameraScanner onScanSuccess={handleScanSuccess} onClose={() => setIsScannerOpen(false)} />}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nama Produk</FormLabel>
+              <FormControl>
+                <Input placeholder="cth: Kopi Susu" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="sku"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>SKU (Kode Unik Produk)</FormLabel>
+              <div className="flex items-center gap-2">
+                <FormControl>
+                  <Input placeholder="Ketik atau pindai kode..." {...field} />
+                </FormControl>
+                {/* Komponen ProductScanner yang sudah terisolasi.
+                  Ia menangani state buka/tutup scanner-nya sendiri.
+                */}
+                <ProductScanner onScan={handleScan} />
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="categoryId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Kategori</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih kategori" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="name"
+            name="sellingPrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nama Produk</FormLabel>
+                <FormLabel>Harga Jual</FormLabel>
                 <FormControl>
-                  <Input placeholder="cth: Kopi Susu" {...field} />
+                  <Input type="number" placeholder="cth: 20000" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name="sku"
+            name="purchasePrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>SKU (Kode Unik Produk)</FormLabel>
-                <div className="flex items-center gap-2">
-                  {' '}
-                  {/* <-- Wrapper untuk input dan tombol */}
-                  <FormControl>
-                    <Input placeholder="Ketik atau pindai kode SKU..." {...field} />
-                  </FormControl>
-                  <Button
-                    type="button"
-                    onClick={() => setIsScannerOpen(true)}
-                    variant="outline"
-                    size="icon"
-                    className="p-2"
-                  >
-                    <ScanLine className="h-4 w-4" />
-                  </Button>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Sisa form lainnya tidak berubah */}
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Kategori</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih kategori" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="sellingPrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Harga Jual</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="cth: 20000" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="purchasePrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Harga Beli</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="cth: 10000" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="stock"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Stok Awal</FormLabel>
+                <FormLabel>Harga Beli</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="cth: 100" {...field} />
+                  <Input type="number" placeholder="cth: 10000" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={onClose}>
-              Batal
-            </Button>
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan'}
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </>
+        </div>
+
+        <FormField
+          control={form.control}
+          name="stock"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Stok Awal</FormLabel>
+              <FormControl>
+                {/* Stok hanya bisa diisi saat membuat produk baru */}
+                <Input type="number" placeholder="cth: 100" {...field} disabled={!!product} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end gap-2 pt-2">
+          <Button type="button" variant="ghost" onClick={onClose}>
+            Batal
+          </Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan'}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
