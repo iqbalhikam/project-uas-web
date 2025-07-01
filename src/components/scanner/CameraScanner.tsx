@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { Html5QrcodeScanner, Html5QrcodeSupportedFormats, QrcodeErrorCallback, QrcodeSuccessCallback } from 'html5-qrcode';
+import { Html5QrcodeScanner, QrcodeErrorCallback, QrcodeSuccessCallback } from 'html5-qrcode';
 import { toast } from 'sonner';
 
 // ... (Interface dan konstanta tetap sama)
@@ -46,8 +46,6 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
 
       rememberLastUsedCamera: true,
       supportedScanTypes: [
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.CODE_128,
       ],
 
       // 3. [OPTIMASI TERPENTING] Nonaktifkan pengecekan cermin
