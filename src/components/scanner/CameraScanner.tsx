@@ -1,74 +1,83 @@
+// src/components/scanner/CameraScanner.tsx
 'use client';
 
-import { Html5Qrcode, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from 'html5-qrcode';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { Html5QrcodeScanner, QrcodeErrorCallback, QrcodeSuccessCallback } from 'html5-qrcode';
 import { toast } from 'sonner';
 
+// ... (Interface dan konstanta tetap sama)
 interface CameraScannerProps {
   onScanSuccess: (result: string) => void;
   onClose: () => void;
 }
-
 const qrcodeRegionId = 'html5-qrcode-reader';
 
 export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerProps) {
-  
-  const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const hasScannedRef = useRef(false);
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  const config = {
-    fps: 25,
-    qrbox: (vw: number, vh: number) => {
-      const size = Math.max(100, Math.min(vw, vh) * 0.7); // minimal 100px
-      return { width: size, height: size };
-    },
-    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA, Html5QrcodeScanType.SCAN_TYPE_FILE],
-    disableFlip: true,
-    formatsToSupport: [
-      Html5QrcodeSupportedFormats.QR_CODE,
-      Html5QrcodeSupportedFormats.EAN_13, // Barcode produk ritel paling umum
-      Html5QrcodeSupportedFormats.UPC_A,
-      Html5QrcodeSupportedFormats.CODE_128, // Barcode umum lainnya
-    ],
-  };
   useEffect(() => {
-    const qrCode = new Html5Qrcode(qrcodeRegionId);
-    html5QrCodeRef.current = qrCode;
+    const successCallback: QrcodeSuccessCallback = (decodedText) => {
+      if (hasScannedRef.current) return;
+      hasScannedRef.current = true;
+      toast.success('Barcode berhasil dipindai!');
+      onScanSuccess(decodedText);
+    };
 
-    qrCode
-      .start(
-        { facingMode: 'environment' },
-        config,
-        (decodedText) => {
-          if (hasScannedRef.current) return;
-          hasScannedRef.current = true;
-          toast.success('Barcode berhasil dipindai!');
+    const errorCallback: QrcodeErrorCallback = () => {
+      // Abaikan
+    };
 
-          
-          if (qrCode) {
-            onScanSuccess(decodedText);
-            qrCode.stop() // hentikan streaming
-              .catch(() => {}) // abaikan error kalau sudah berhenti
-              .finally(() => qrCode.clear()); // bersihkan elemen DOM
-          }
-        },
+    // --- KONFIGURASI SUPER CEPAT ---
+    const config = {
+      // 1. Keseimbangan FPS yang baik dengan resolusi tinggi
+      fps: 25,
 
-        () => {}
-      )
-      .catch((err) => {
-        console.error('Error saat memulai scanner:', err);
-        toast.error('Tidak bisa mengakses kamera');
-      });
+      // 2. [OPTIMASI] qrbox dibuat dinamis
+      qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+        // Tentukan ukuran kotak sebagai 70% dari dimensi terkecil (lebar atau tinggi)
+        // Ini memastikan kotak selalu pas dan berbentuk persegi
+        const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.7;
+        return {
+          width: size,
+          height: size,
+        };
+      },
+
+      rememberLastUsedCamera: true,
+      supportedScanTypes: [],
+
+      // 3. [OPTIMASI TERPENTING] Nonaktifkan pengecekan cermin
+      disableFlip: true,
+
+      videoConstraints: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 1280 },
+        advanced: [{ focusMode: 'continuous' }],
+      },
+    } as never;
+
+    // ... (sisa kode useEffect tetap sama)
+    try {
+      scannerRef.current = new Html5QrcodeScanner(qrcodeRegionId, config, false);
+      scannerRef.current.render(successCallback, errorCallback);
+    } catch (err) {
+      console.error('Gagal memulai Html5QrcodeScanner:', err);
+      toast.error('Gagal memulai kamera. Pastikan izin telah diberikan.');
+    }
 
     return () => {
-      qrCode
-        .stop()
-        .catch(() => {})
-        .then(() => qrCode.clear());
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch((error) => {
+          console.error('Gagal membersihkan scanner.', error);
+        });
+      }
       hasScannedRef.current = false;
     };
   }, [onScanSuccess]);
 
+  // JSX tidak perlu diubah
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ position: 'relative', width: '90%', maxWidth: '600px', background: 'white', padding: '20px', borderRadius: '8px' }}>
