@@ -22,6 +22,9 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
       hasScannedRef.current = true;
       toast.success('Barcode berhasil dipindai!');
       onScanSuccess(decodedText);
+      onClose();
+      scannerRef.current?.clear();
+      
     };
 
     const errorCallback: QrcodeErrorCallback = () => {
@@ -76,7 +79,7 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
       }
       hasScannedRef.current = false;
     };
-  }, [onScanSuccess]);
+  }, [onScanSuccess, onClose]);
 
   // JSX tidak perlu diubah
   return (
