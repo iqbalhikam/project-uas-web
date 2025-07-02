@@ -71,3 +71,79 @@ export async function createPurchaseOrder(data: unknown) {
     return { error: 'Gagal membuat order pembelian.' };
   }
 }
+
+export async function getPurchaseOrderById(id: string) {
+  try {
+    const purchaseOrder = await prisma.purchaseOrder.findUnique({
+      where: { id },
+      include: {
+        supplier: true,
+        items: {
+          include: {
+            product: true, // Sertakan detail produk di setiap item
+          },
+        },
+      },
+    });
+    if (!purchaseOrder) {
+      return { error: 'Order pembelian tidak ditemukan.' };
+    }
+    return { purchaseOrder };
+  } catch {
+    return { error: 'Gagal memuat data order pembelian.' };
+  }
+}
+
+type ReceivedItem = {
+  productId: string;
+  quantityReceived: number;
+};
+
+export async function receivePurchaseOrder(purchaseOrderId: string, receivedItems: ReceivedItem[]) {
+  try {
+    // Gunakan transaksi untuk memastikan semua operasi database konsisten
+    await prisma.$transaction(async (tx) => {
+      // 1. Update status Purchase Order menjadi COMPLETED
+      await tx.purchaseOrder.update({
+        where: { id: purchaseOrderId },
+        data: { status: 'COMPLETED' },
+      });
+
+      // 2. Loop setiap item yang diterima untuk update stok
+      for (const item of receivedItems) {
+        if (item.quantityReceived > 0) {
+          // Tambah stok di tabel Product
+          await tx.product.update({
+            where: { id: item.productId },
+            data: {
+              stock: {
+                increment: item.quantityReceived,
+              },
+            },
+          });
+
+          // (Opsional tapi direkomendasikan) Catat pergerakan stok
+          await tx.stockMovement.create({
+            data: {
+              productId: item.productId,
+              type: 'PURCHASE',
+              quantityChange: item.quantityReceived,
+              reason: `Penerimaan dari PO #${purchaseOrderId.substring(0, 8)}`,
+              purchaseOrderId: purchaseOrderId,
+            },
+          });
+        }
+      }
+    });
+
+    // Revalidasi path agar data di halaman lain ikut ter-update
+    revalidatePath('/dashboard/purchases');
+    revalidatePath('/dashboard/products');
+    revalidatePath('/dashboard');
+
+    return { message: 'Penerimaan barang berhasil diproses dan stok telah diperbarui.' };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Gagal memproses penerimaan barang.' };
+  }
+}

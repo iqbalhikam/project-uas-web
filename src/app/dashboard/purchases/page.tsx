@@ -9,6 +9,8 @@ import { getSuppliers } from '@/lib/actions/supplier.actions';
 import { getProducts } from '@/lib/actions/product.actions';
 import { PurchaseActions } from '@/components/purchases/PurchaseActions';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 // Fungsi helper untuk format mata uang
 const formatCurrency = (amount: number) => {
@@ -80,8 +82,11 @@ export default async function PurchasesPage() {
                         <Badge variant={getStatusVariant(po.status)}>{po.status}</Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        {/* Di sini nanti kita bisa tambahkan aksi per baris,
-                            seperti "Lihat Detail" atau "Terima Barang" */}
+                        {po.status === 'PENDING' && (
+                          <Button asChild variant="outline" size="sm">
+                            <Link href={`/dashboard/purchases/receive/${po.id}`}>Terima Barang</Link>
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))

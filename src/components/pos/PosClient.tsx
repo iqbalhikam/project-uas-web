@@ -1,7 +1,7 @@
 // components/pos/PosClient.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Product, Customer } from '@prisma/client';
 import { processSale } from '@/lib/actions/pos.actions';
 import { toast } from 'sonner';
@@ -35,8 +35,9 @@ export function PosClient({ products, customers }: PosClientProps) {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300); // Debounce 300ms
   const [filteredProducts, setFilteredProducts] = useState(products);
-
+  const searchInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
+    searchInputRef.current?.focus();
     setFilteredProducts(products.filter((product) => product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())));
   }, [debouncedSearchTerm, products]);
   const addToCart = (product: Product) => {
@@ -111,10 +112,10 @@ export function PosClient({ products, customers }: PosClientProps) {
       {isScannerOpen && <CameraScanner onScanSuccess={handleScanSuccess} onClose={() => setIsScannerOpen(false)} />}
       {/* Kolom Kiri: Daftar Produk */}
       <div className="lg:col-span-2 bg-card rounded-lg shadow">
-        <div className="p-4 border-b ">
+        <div className="p-4 border-b flex items-center gap-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Cari produk..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            <Input ref={searchInputRef} placeholder="Cari atau pindai produk..." className="pl-8" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           </div>
           <Button variant="outline" size="icon" onClick={() => setIsScannerOpen(true)}>
             <ScanLine className="h-4 w-4" />
@@ -140,7 +141,7 @@ export function PosClient({ products, customers }: PosClientProps) {
         <CardContent className="flex-grow overflow-y-auto">
           <div className="mb-4">
             <Select onValueChange={setSelectedCustomerId} value={selectedCustomerId}>
-              <SelectTrigger className='w-full'>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Pelanggan Umum (Default)" />
               </SelectTrigger>
               <SelectContent>
@@ -156,7 +157,7 @@ export function PosClient({ products, customers }: PosClientProps) {
           </div>
           <div className="mb-4">
             <Select onValueChange={setPaymentMethod} value={paymentMethod}>
-              <SelectTrigger className='w-full'>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Pilih Metode Pembayaran" />
               </SelectTrigger>
               <SelectContent>
