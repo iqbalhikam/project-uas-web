@@ -4,14 +4,9 @@ import { getPurchaseOrderById } from '@/lib/actions/purchase.actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GoodsReceiptForm } from '@/components/purchases/GoodsReceiptForm';
 
-interface GoodsReceiptPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default async function GoodsReceiptPage({ params }: GoodsReceiptPageProps) {
-  const { purchaseOrder, error } = await getPurchaseOrderById(params.id);
+export default async function GoodsReceiptPage({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const { purchaseOrder, error } = await getPurchaseOrderById(id);
 
   if (error || !purchaseOrder) {
     return <div className="p-8 text-center text-red-500">{error || 'Order pembelian tidak ditemukan.'}</div>;
