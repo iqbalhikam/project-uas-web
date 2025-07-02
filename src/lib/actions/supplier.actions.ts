@@ -5,6 +5,7 @@
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { SupplierSchema } from '@/lib/schemas/supplier.schema';
+import { verifyAdmin } from '../auth-utils';
 
 export async function getSuppliers() {
   try {
@@ -18,6 +19,8 @@ export async function getSuppliers() {
 }
 
 export async function createSupplier(formData: FormData) {
+  const adminCheck = await verifyAdmin();
+  if (adminCheck.error) return {error :`error : anda bukan admin`};
   const validatedFields = SupplierSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
@@ -34,6 +37,8 @@ export async function createSupplier(formData: FormData) {
 }
 
 export async function updateSupplier(id: string, formData: FormData) {
+  const adminCheck = await verifyAdmin();
+  if (adminCheck.error) return {error :`error : anda bukan admin`};
   const validatedFields = SupplierSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
@@ -53,6 +58,8 @@ export async function updateSupplier(id: string, formData: FormData) {
 }
 
 export async function deleteSupplier(id: string) {
+  const adminCheck = await verifyAdmin();
+    if (adminCheck.error) return {error :`error : anda bukan admin`};
   try {
     await prisma.supplier.delete({ where: { id } });
     revalidatePath('/dashboard/suppliers');

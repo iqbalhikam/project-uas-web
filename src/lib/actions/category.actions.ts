@@ -5,6 +5,7 @@
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { CategorySchema } from '@/lib/schemas/category.schema';
+import { verifyAdmin } from '../auth-utils';
 
 export async function getCategories(page = 1, limit = 10) {
   try {
@@ -26,6 +27,8 @@ export async function getCategories(page = 1, limit = 10) {
 }
 
 export async function createCategory(formData: FormData) {
+  const adminCheck = await verifyAdmin();
+  if (adminCheck.error) return adminCheck;
   const validatedFields = CategorySchema.safeParse({
     name: formData.get('name'),
   });

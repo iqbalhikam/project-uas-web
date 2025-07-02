@@ -44,7 +44,7 @@ export function SupplierActions({ supplier }: SupplierActionsProps) {
     toast.promise(promise, {
       loading: supplier ? 'Memperbarui...' : 'Menambahkan...',
       success: (res) => {
-        if (res.error) throw new Error(res.error);
+        if (res.error) throw new Error(res.message);
         setIsDialogOpen(false);
         form.reset();
         return res.message;

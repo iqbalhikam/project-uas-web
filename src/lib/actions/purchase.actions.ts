@@ -4,6 +4,7 @@
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { PurchaseOrderSchema } from '../schemas/purchase.schema';
+import { verifyAdmin } from '../auth-utils';
 
 // Fungsi untuk mengambil semua data Purchase Order
 export async function getPurchaseOrders() {
@@ -25,6 +26,8 @@ export async function getPurchaseOrders() {
 
 // Fungsi untuk membuat Purchase Order baru
 export async function createPurchaseOrder(data: unknown) {
+  const adminCheck = await verifyAdmin();
+  if (adminCheck.error) return adminCheck;
   // 1. Validasi data yang masuk menggunakan skema
   const validatedFields = PurchaseOrderSchema.safeParse(data);
   if (!validatedFields.success) {

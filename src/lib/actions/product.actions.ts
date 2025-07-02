@@ -5,6 +5,7 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import ProductSchema from '../schemas/product.schema';
+import { verifyAdmin } from '../auth-utils';
 
 // Skema validasi menggunakan Zod
 
@@ -43,6 +44,8 @@ export async function getCategories() {
 }
 
 export async function createProduct(formData: FormData) {
+  const adminCheck = await verifyAdmin();
+    if (adminCheck.error) return adminCheck;
   const validatedFields = ProductSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
