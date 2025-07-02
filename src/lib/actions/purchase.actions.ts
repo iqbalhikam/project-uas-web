@@ -27,7 +27,7 @@ export async function getPurchaseOrders() {
 // Fungsi untuk membuat Purchase Order baru
 export async function createPurchaseOrder(data: unknown) {
   const adminCheck = await verifyAdmin();
-  if (adminCheck.error) return adminCheck;
+  if (adminCheck.error) return adminCheck.error;
   // 1. Validasi data yang masuk menggunakan skema
   const validatedFields = PurchaseOrderSchema.safeParse(data);
   if (!validatedFields.success) {

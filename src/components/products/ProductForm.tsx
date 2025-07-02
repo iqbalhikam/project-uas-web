@@ -75,7 +75,9 @@ export function ProductForm({ categories, product, onClose }: ProductFormProps) 
         form.reset();
         onClose();
         router.refresh();
-        return res.message;
+        if ("message" in res) {
+          return res.message;
+        }
       },
       error: (err) => err.message,
     });

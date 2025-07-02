@@ -45,7 +45,7 @@ export async function getCategories() {
 
 export async function createProduct(formData: FormData) {
   const adminCheck = await verifyAdmin();
-    if (adminCheck.error) return adminCheck;
+  if (adminCheck.error) return adminCheck;
   const validatedFields = ProductSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
@@ -67,6 +67,8 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function updateProduct(id: string, formData: FormData) {
+  const adminCheck = await verifyAdmin();
+  if (adminCheck.error) return adminCheck;
   const validatedFields = ProductSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
@@ -89,6 +91,8 @@ export async function updateProduct(id: string, formData: FormData) {
 }
 
 export async function deleteProduct(id: string) {
+  const adminCheck = await verifyAdmin();
+  if (adminCheck.error) return adminCheck.error;
   try {
     await prisma.product.delete({
       where: { id },

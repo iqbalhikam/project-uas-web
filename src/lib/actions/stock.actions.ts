@@ -13,6 +13,7 @@ type AdjustmentItem = {
 
 // Fungsi untuk melakukan penyesuaian stok
 export async function adjustStock(items: AdjustmentItem[], reason: string) {
+  
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== 'ADMIN') {
     return { error: 'Akses ditolak. Hanya admin yang bisa melakukan penyesuaian stok.' };

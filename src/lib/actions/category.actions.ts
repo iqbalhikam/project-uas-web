@@ -28,7 +28,7 @@ export async function getCategories(page = 1, limit = 10) {
 
 export async function createCategory(formData: FormData) {
   const adminCheck = await verifyAdmin();
-  if (adminCheck.error) return adminCheck;
+  if (adminCheck.error) return adminCheck.error;
   const validatedFields = CategorySchema.safeParse({
     name: formData.get('name'),
   });
@@ -61,6 +61,8 @@ export async function createCategory(formData: FormData) {
 }
 
 export async function updateCategory(id: string, formData: FormData) {
+  const adminCheck = await verifyAdmin();
+  if (adminCheck.error) return adminCheck.error;
   const validatedFields = CategorySchema.safeParse({
     name: formData.get('name'),
   });
@@ -86,6 +88,8 @@ export async function updateCategory(id: string, formData: FormData) {
 }
 
 export async function deleteCategory(id: string) {
+  const adminCheck = await verifyAdmin();
+  if (adminCheck.error) return adminCheck.error;
   try {
     await prisma.category.delete({
       where: { id },
