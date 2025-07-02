@@ -40,7 +40,7 @@ export function CategoryActions({ category }: CategoryActionsProps) {
       success: (res) => {
         if (res.error) throw new Error(res.error);
         setIsDialogOpen(false);
-        return res.message;
+        return res.error;
       },
       error: (err) => err.message,
     });
