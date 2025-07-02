@@ -93,6 +93,11 @@ export async function deleteProduct(id: string) {
     revalidatePath('/dashboard/products');
     return { message: 'Produk berhasil dihapus' };
   } catch (error) {
-    return { error: 'Gagal menghapus produk.' };
+    // Cek jika error disebabkan oleh relasi data (foreign key constraint)
+    if (error instanceof Error && error.message.includes('foreign key constraint')) {
+      return { error: 'Gagal: Produk ini sudah digunakan dalam transaksi penjualan.' };
+    }
+    // Error umum lainnya
+    return { error: 'Gagal menghapus produk, data sudah digunakan di laporan penjualan' };
   }
 }

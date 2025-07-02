@@ -32,13 +32,26 @@ export function ProductActions({ categories, product }: ProductActionsProps) {
   const handleDelete = async () => {
     if (!product) return;
 
-    const promise = deleteProduct(product.id);
-    toast.promise(promise, {
-      loading: 'Menghapus produk...',
-      success: 'Produk berhasil dihapus',
-      error: 'Gagal menghapus produk',
-    });
+    // Tampilkan notifikasi loading secara manual
+    const toastId = toast.loading('Menghapus produk...');
+
+    // Panggil server action dan tunggu hasilnya
+    const result = await deleteProduct(product.id);
+
+    // Periksa hasil dari server action
+    if (result.error) {
+      // Jika ada error, tampilkan notifikasi error
+      toast.error(result.error, { id: toastId });
+    } else {
+      // Jika berhasil, tampilkan notifikasi sukses
+      toast.success(result.message, { id: toastId });
+      // Anda bisa menambahkan revalidatePath di sini jika diperlukan
+      // atau biarkan server action yang menanganinya
+    }
+
+    setIsAlertOpen(false); // Tutup dialog konfirmasi
   };
+
 
   // Jika tidak ada `product` di props, berarti ini adalah tombol "Tambah Produk Baru"
   if (!product) {
@@ -94,10 +107,11 @@ export function ProductActions({ categories, product }: ProductActionsProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
-            <AlertDialogDescription>Aksi ini tidak bisa dibatalkan. Ini akan menghapus produk &quot;{product.name}&quot; secara permanen.</AlertDialogDescription>
+            <AlertDialogDescription>Aksi ini tidak bisa dibatalkan. Ini akan menghapus produk &quot;{product?.name}&quot; secara permanen.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
+            {/* Pastikan onClick di sini memanggil fungsi handleDelete yang sudah kita modifikasi */}
             <AlertDialogAction onClick={handleDelete}>Ya, Hapus</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
