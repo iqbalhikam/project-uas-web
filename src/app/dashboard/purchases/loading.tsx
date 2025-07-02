@@ -4,7 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 const PurchasesLoading = () => {
   return (
-    <div>
       <div className="p-4 md:p-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
@@ -52,7 +51,6 @@ const PurchasesLoading = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
   );
 };
 
