@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { ScanLine } from 'lucide-react';
+import { Loader2Icon, ScanLine } from 'lucide-react';
 import { createProduct, updateProduct } from '@/lib/actions/product.actions';
 import ProductSchema from '@/lib/schemas/product.schema';
 
@@ -189,7 +189,7 @@ export function ProductForm({ categories, product, onClose }: ProductFormProps) 
               Batal
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan'}
+              {form.formState.isSubmitting ? 'Menyimpan...'+(<Loader2Icon className="animate-spin" />) : 'Simpan'}
             </Button>
           </div>
         </form>

@@ -6,9 +6,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { CategoryActions } from '@/components/categories/CategoryActions';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-export default async function CategoriesPage() {
-  const { categories, error } = await getCategories();
+interface CategoriesPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function CategoriesPage( { searchParams }: CategoriesPageProps ) {
+  // const { categories, error } = await getCategories();
+  const currentSearchParams = await searchParams;
+  const currentPage = Number(currentSearchParams?.page) || 1;
+  const limit = 5;
+
+  const { totalCategories, categories, error } = await getCategories(currentPage, limit);
 
   if (error) {
     return <div className="p-8 text-red-500">{error}</div>;
@@ -17,6 +28,8 @@ export default async function CategoriesPage() {
   if (!categories) {
     return <div className="p-8">Gagal memuat data kategori.</div>;
   }
+
+  const totalPages = Math.ceil((totalCategories || 0) / limit);
 
   return (
     <div className="p-4 md:p-6">
@@ -57,6 +70,21 @@ export default async function CategoriesPage() {
                 )}
               </TableBody>
             </Table>
+          </div>
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <Link href={`?page=${currentPage > 1 ? currentPage - 1 : 1}`}>
+              <Button variant="outline" size="sm" disabled={currentPage <= 1}>
+                Sebelumnya
+              </Button>
+            </Link>
+            <span className="text-sm">
+              Halaman {currentPage} dari {totalPages}
+            </span>
+            <Link href={`?page=${currentPage < totalPages ? currentPage + 1 : totalPages}`}>
+              <Button variant="outline" size="sm" disabled={currentPage >= totalPages}>
+                Selanjutnya
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>

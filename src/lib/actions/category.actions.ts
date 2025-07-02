@@ -6,14 +6,20 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { CategorySchema } from '@/lib/schemas/category.schema';
 
-export async function getCategories() {
+export async function getCategories(page = 1, limit = 10) {
   try {
-    const categories = await prisma.category.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-    return { categories };
+    const skip = (page - 1) * limit;
+    const [categories, totalCategories] = await prisma.$transaction([
+      prisma.category.findMany({
+        skip: skip,
+        take: limit, // Batasi jumlah data yang diambil
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      prisma.category.count(), // Hitung total produk untuk paginasi
+    ]);
+    return { categories, totalCategories };
   } catch (error) {
     return { error: 'Gagal memuat kategori' };
   }
