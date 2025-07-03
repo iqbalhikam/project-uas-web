@@ -5,14 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { GoodsReceiptForm } from '@/components/purchases/GoodsReceiptForm';
 // import { id } from 'date-fns/locale';
 
-type Params = Promise<{slug :  string}>;
 
-export default async function GoodsReceiptPage(props: { params: Params}) {
-    const params = await props.params;
-  const { purchaseOrder, error } = await getPurchaseOrderById(params.slug);
+
+export default async function GoodsReceiptPage({ params }: { params: Promise<{ slug: string }> }) {
+  const {slug} = await params;
+  const { purchaseOrder, error } = await getPurchaseOrderById(slug);
 
   if (error || !purchaseOrder) {
-    return <div className="p-8 text-center text-red-500">{error || 'Order pembelian tidak ditemukan.'}</div>;
+    console.log(error);
+    return <div className="p-8 text-center text-red-500">{error}</div>;
   }
 
   if (purchaseOrder.status !== 'PENDING') {

@@ -89,7 +89,7 @@ export async function updateCategory(id: string, formData: FormData) {
 
 export async function deleteCategory(id: string) {
   const adminCheck = await verifyAdmin();
-  if (adminCheck.error) return adminCheck.error;
+  if (adminCheck.error) return adminCheck;
   try {
     await prisma.category.delete({
       where: { id },

@@ -5,6 +5,7 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { PurchaseOrderSchema } from '../schemas/purchase.schema';
 import { verifyAdmin } from '../auth-utils';
+import { error } from 'console';
 
 // Fungsi untuk mengambil semua data Purchase Order
 export async function getPurchaseOrders() {
@@ -93,7 +94,7 @@ export async function getPurchaseOrderById(id: string) {
     }
     return { purchaseOrder };
   } catch {
-    return { error: 'Gagal memuat data order pembelian.' };
+    return { error: `Gagal memuat data order pembelian. ${error}` };
   }
 }
 

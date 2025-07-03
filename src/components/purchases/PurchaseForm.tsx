@@ -38,9 +38,10 @@ export function PurchaseForm({ suppliers, products, onClose }: PurchaseFormProps
     toast.promise(createPurchaseOrder(values), {
       loading: 'Menyimpan order...',
       success: (res) => {
-        if (res.error) throw new Error(res.error);
+        if (typeof res === 'object' && res.error) throw new Error(res.error);
         onClose();
-        return res.message;
+        if (typeof res === 'object' && res.message) return res.message;
+        // return res.message;
       },
       error: (err) => err.message,
     });

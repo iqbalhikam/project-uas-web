@@ -38,9 +38,15 @@ export function CategoryActions({ category }: CategoryActionsProps) {
     toast.promise(promise, {
       loading: category ? 'Memperbarui...' : 'Menambahkan...',
       success: (res) => {
-        if (res.error) throw new Error(res.error);
+        // **PERBAIKAN DI SINI**
+        if (typeof res === 'object' && res !== null && 'error' in res && res.error) {
+          throw new Error(String(res.error));
+        }
         setIsDialogOpen(false);
-        return res.error;
+        if (typeof res === 'object' && res !== null && 'message' in res && res.message) {
+          return res.message;
+        }
+        return 'Aksi berhasil!';
       },
       error: (err) => err.message,
     });
@@ -48,14 +54,19 @@ export function CategoryActions({ category }: CategoryActionsProps) {
 
   const handleDelete = () => {
     if (!category) return;
-    const promise = deleteCategory(category.id).then((res) => {
-      if (res.error) throw new Error(res.error);
-      return res;
-    });
+    const promise = deleteCategory(category.id);
 
     toast.promise(promise, {
       loading: 'Menghapus...',
-      success: (res) => res.message,
+      success: (res) => {
+        if ("error" in res) {
+          throw new Error(res.error);
+        }
+        if ('message' in res) {
+          return res.message;
+        }
+        return 'Kategori berhasil dihapus.';
+      },
       error: (err) => err.message,
     });
   };
