@@ -3,13 +3,13 @@
 import { getPurchaseOrderById } from '@/lib/actions/purchase.actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GoodsReceiptForm } from '@/components/purchases/GoodsReceiptForm';
-// import { id } from 'date-fns/locale';
 
 
 
-export default async function GoodsReceiptPage({ params }: { params: Promise<{ slug: string }> }) {
-  const {slug} = await params;
-  const { purchaseOrder, error } = await getPurchaseOrderById(slug);
+export default async function GoodsReceiptPage({ params }: { params: Promise<{ id: string }> }) {
+  const {id} = await params;
+  console.log(`ID : ${id}`);
+  const { purchaseOrder, error } = await getPurchaseOrderById(id);
 
   if (error || !purchaseOrder) {
     console.log(error);
