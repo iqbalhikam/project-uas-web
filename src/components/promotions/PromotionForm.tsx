@@ -43,12 +43,11 @@ export function PromotionForm({ promotion, categories, onClose }: PromotionFormP
     });
 
     const promise = isEditMode ? updatePromotion(promotion.id, formData) : createPromotion(formData);
-    console.log(`Error : ${JSON.stringify((await promise).message)}`);
     toast.promise(promise, {
       loading: isEditMode ? 'Memperbarui promosi...' : 'Menambahkan promosi...',
       success: (res) => {
-        if (res.success) {
-          throw new Error(res.message);
+        if (!res.success) {
+          console.error(res.errors);
         }
         onClose();
         return res.message;
@@ -142,6 +141,7 @@ export function PromotionForm({ promotion, categories, onClose }: PromotionFormP
             </FormItem>
           )}
         />
+        
 
         <div className="flex justify-end gap-2 pt-4">
           <Button type="button" variant="ghost" onClick={onClose}>

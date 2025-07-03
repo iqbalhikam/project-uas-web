@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 interface CategoryActionsProps {
   category?: Category;
@@ -115,6 +116,7 @@ export function CategoryActions({ category }: CategoryActionsProps) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{category ? 'Edit Kategori' : 'Tambah Kategori Baru'}</DialogTitle>
+          <DialogDescription>{category ? 'Ubah nama untuk kategori ini.' : 'Buat kategori baru untuk produk Anda.'}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -32,7 +32,7 @@ export async function createPromotion(formData: FormData) {
   const validatedFields = PromotionSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
-    return {success : false, message : `Data tidak valid. errors : ${validatedFields.error.flatten().fieldErrors }`};
+    return {success : false,  errors: validatedFields.error.flatten().fieldErrors };
   }
 
   const data = {
@@ -60,7 +60,7 @@ export async function updatePromotion(id: string, formData: FormData) {
   const validatedFields = PromotionSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
-    return { success: false, message: { errors: validatedFields.error.flatten().fieldErrors} };
+    return { success: false, errors: validatedFields.error.flatten().fieldErrors};
   }
 
   const data = {
