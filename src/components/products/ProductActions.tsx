@@ -1,59 +1,55 @@
-// components/products/ProductActions.tsx
+
 'use client';
 
 import { useState } from 'react';
 import { Category, Product } from '@prisma/client';
 import { toast } from 'sonner';
 
-// Impor komponen UI dari shadcn/ui
+
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { MoreHorizontal } from 'lucide-react';
 
-// Impor Server Action dan Form
+
 import { deleteProduct } from '@/lib/actions/product.actions';
 import { ProductForm } from './ProductForm';
-// import { ProductForm } from './product-form'; // Pastikan path impor ini benar
 
-// Definisikan props untuk komponen ini
+
+
 interface ProductActionsProps {
   categories: Category[];
-  product?: Product; // product bersifat opsional
+  product?: Product; 
 }
 
 export function ProductActions({ categories, product }: ProductActionsProps) {
-  // State untuk mengontrol dialog form (Tambah/Edit)
+  
   const [isFormOpen, setIsFormOpen] = useState(false);
-  // State untuk mengontrol dialog konfirmasi hapus
+  
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const handleDelete = async () => {
     if (!product) return;
 
-    // Tampilkan notifikasi loading secara manual
+    
     const toastId = toast.loading('Menghapus produk...');
 
-    // Panggil server action dan tunggu hasilnya
+    
     const result = await deleteProduct(product.id);
 
-    // Periksa hasil dari server action
-    if (result.error) {
-      // Jika ada error, tampilkan notifikasi error
-      toast.error(result.error, { id: toastId });
+    
+    if (result.success) {
+      toast.error(result.message, { id: toastId });
     } else {
-      // Jika berhasil, tampilkan notifikasi sukses
       toast.success(result.message, { id: toastId });
-      // Anda bisa menambahkan revalidatePath di sini jika diperlukan
-      // atau biarkan server action yang menanganinya
     }
 
-    setIsAlertOpen(false); // Tutup dialog konfirmasi
+    setIsAlertOpen(false); 
   };
 
 
-  // Jika tidak ada `product` di props, berarti ini adalah tombol "Tambah Produk Baru"
+  
   if (!product) {
     return (
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -70,7 +66,7 @@ export function ProductActions({ categories, product }: ProductActionsProps) {
     );
   }
 
-  // Jika ada `product` di props, berarti ini adalah menu aksi untuk setiap baris tabel
+  
   return (
     <>
       <DropdownMenu>
@@ -96,7 +92,7 @@ export function ProductActions({ categories, product }: ProductActionsProps) {
           </DialogHeader>
           <ProductForm
             categories={categories}
-            product={product} // Kirim data produk untuk mode edit
+            product={product} 
             onClose={() => setIsFormOpen(false)}
           />
         </DialogContent>

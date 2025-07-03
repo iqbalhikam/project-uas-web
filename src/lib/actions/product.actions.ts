@@ -92,7 +92,9 @@ export async function updateProduct(id: string, formData: FormData) {
 
 export async function deleteProduct(id: string) {
   const adminCheck = await verifyAdmin();
-  if (adminCheck.error) return adminCheck.error;
+  if (adminCheck.error) {
+    return { success: false, message: adminCheck.error };
+  };
   try {
     await prisma.product.delete({
       where: { id },
@@ -102,9 +104,9 @@ export async function deleteProduct(id: string) {
   } catch (error) {
     // Cek jika error disebabkan oleh relasi data (foreign key constraint)
     if (error instanceof Error && error.message.includes('foreign key constraint')) {
-      return { error: 'Gagal: Produk ini sudah digunakan dalam transaksi penjualan.' };
+      return { success: false, message: 'Gagal: Produk ini sudah digunakan dalam transaksi.' };
     }
     // Error umum lainnya
-    return { error: 'Gagal menghapus produk, data sudah digunakan di laporan penjualan' };
+    return { success: false, message: 'Gagal menghapus produk karena alasan yang tidak diketahui.' };
   }
 }
