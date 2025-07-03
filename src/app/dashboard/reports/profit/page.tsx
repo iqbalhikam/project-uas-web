@@ -3,12 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { StatCard } from '@/components/dashboard/StatCard';
-import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
-
-type ProfitReportPageProps = {
-  // params tidak digunakan di halaman ini, tapi searchParams iya
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
+import { DollarSign, TrendingUp, TrendingDown, Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat('id-ID', {
@@ -17,13 +13,20 @@ const formatCurrency = (amount: number) =>
     minimumFractionDigits: 0,
   }).format(amount);
 
+type ProfitReportPageProps = {
+  // params tidak digunakan di halaman ini, tapi searchParams iya
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 export default async function ProfitReportPage({ searchParams }: ProfitReportPageProps) {
   const currentSearchParams = await searchParams;
 
-  const from = currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : new Date(new Date().setMonth(new Date().getMonth() - 1));
-  const to = currentSearchParams?.to ? new Date(String(currentSearchParams.from)) : new Date();
+  const from = currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : undefined;
+  const to = currentSearchParams?.to ? new Date(String(currentSearchParams.to)) : undefined;
 
-  const report = await getProfitReport(from, to);
+  const dateFrom = from || new Date(new Date().setMonth(new Date().getMonth() - 1));
+  const dateTo = to || new Date();
+
+  const report = await getProfitReport(dateFrom, dateTo);
 
   // ... (sisa kode tidak berubah)
   if (report.error) {
@@ -40,7 +43,15 @@ export default async function ProfitReportPage({ searchParams }: ProfitReportPag
           <h1 className="text-2xl font-bold">Laporan Laba Rugi</h1>
           <p className="text-muted-foreground">Analisis keuntungan dari penjualan produk.</p>
         </div>
-        <DateRangePicker />
+        <div className="flex items-center gap-2">
+          <DateRangePicker />
+          <a href={`/api/export/profit?from=${dateFrom.toISOString()}&to=${dateTo.toISOString()}`} download>
+            <Button>
+              <Download className="mr-2 h-4 w-4" />
+              Export
+            </Button>
+          </a>
+        </div>
       </div>
       {/* Kartu Statistik Ringkasan */}
       <div className="grid gap-4 md:grid-cols-3">

@@ -30,8 +30,6 @@ const getSalesByDateRange = async(from: Date, to: Date) => {
     return { error: 'Gagal memuat laporan penjualan.' };
   }
 }
-
-
 const getProfitReport = async(from: Date, to: Date) => {
   try {
     // Ambil semua item penjualan dalam rentang tanggal,
