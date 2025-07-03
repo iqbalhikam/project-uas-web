@@ -9,7 +9,7 @@ export async function getDashboardStats() {
     today.setHours(0, 0, 0, 0); // Set waktu ke awal hari
 
     // Menghitung beberapa statistik secara bersamaan menggunakan Promise.all
-    const [salesTodayData, totalRevenueData, productCount, customerCount, lowStockProducts, recentSales] = await Promise.all([
+    const [salesTodayData, totalRevenueData, productCount, lowStockProducts, recentSales] = await Promise.all([
       // 1. Total penjualan hari ini
       prisma.sale.aggregate({
         _sum: { totalAmount: true },
@@ -21,8 +21,6 @@ export async function getDashboardStats() {
       }),
       // 3. Jumlah total produk
       prisma.product.count(),
-      // 4. Jumlah total pelanggan
-      prisma.customer.count(),
       // 5. Produk dengan stok menipis (stok <= 10)
       prisma.product.findMany({
         where: { stock: { lte: 10 } },
@@ -33,13 +31,7 @@ export async function getDashboardStats() {
       prisma.sale.findMany({
         orderBy: { saleDate: 'desc' },
         take: 5,
-        include: {
-          customer: {
-            select: {
-              name: true, // Hanya ambil kolom 'name' dari customer
-            },
-          },
-        },
+        
       }),
     ]);
 
@@ -47,7 +39,6 @@ export async function getDashboardStats() {
       salesToday: salesTodayData._sum.totalAmount || 0,
       totalRevenue: totalRevenueData._sum.totalAmount || 0,
       productCount,
-      customerCount,
       lowStockProducts,
       recentSales,
     };

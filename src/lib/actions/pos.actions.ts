@@ -12,13 +12,11 @@ import { authOptions } from '../auth';
 export async function getPosData() {
   try {
     const products = await prisma.product.findMany({
-      where: { stock: { gt: 0 } }, // Hanya ambil produk yang stoknya ada
+      where: { stock: { gt: 0 } },
       orderBy: { name: 'asc' },
     });
-    const customers = await prisma.customer.findMany({
-      orderBy: { name: 'asc' },
-    });
-    return { products, customers };
+    // HAPUS BARIS INI: const customers = await prisma.customer.findMany(...);
+    return { products }; // Hapus 'customers' dari return
   } catch (error) {
     return { error: 'Gagal memuat data untuk POS.' };
   }
@@ -33,23 +31,7 @@ type CartItem = {
   quantity: number;
 };
 
-async function getGeneralCustomerId() {
-  let generalCustomer = await prisma.customer.findUnique({
-    where: { phone: '0000' }, // Kita gunakan nomor telepon unik sebagai penanda
-  });
 
-  // Jika tidak ada, buat baru
-  if (!generalCustomer) {
-    generalCustomer = await prisma.customer.create({
-      data: {
-        name: 'Pelanggan Umum',
-        phone: '0000', // Pastikan ini unik
-        address: 'N/A',
-      },
-    });
-  }
-  return generalCustomer.id;
-}
 
 export async function processSale(cartItems: CartItem[], customerId: string, totalAmount: number, paymentMethod: string) {
   const session = await getServerSession(authOptions);
@@ -62,7 +44,6 @@ export async function processSale(cartItems: CartItem[], customerId: string, tot
   }
 
   try {
-    const finalCustomerId = customerId || (await getGeneralCustomerId());
 
     // Prisma Transaction: Semua operasi di dalamnya akan berhasil atau gagal bersamaan.
     const sale = await prisma.$transaction(async (tx) => {
@@ -83,7 +64,6 @@ export async function processSale(cartItems: CartItem[], customerId: string, tot
       const newSale = await tx.sale.create({
         data: {
           totalAmount,
-          customerId: finalCustomerId,
           userId: session.user.id,
           paymentMethod: paymentMethod as any, // Asumsi PaymentMethod adalah enum yang valid
         },

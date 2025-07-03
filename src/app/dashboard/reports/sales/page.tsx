@@ -64,7 +64,7 @@ export default async function SalesReportPage({ searchParams }: SalesReportPageP
                     <TableRow key={sale.id}>
                       <TableCell className="font-mono">{sale.invoiceNumber.substring(0, 8)}...</TableCell>
                       <TableCell>{format(sale.saleDate, 'dd MMMM yyyy, HH:mm', { locale: id })}</TableCell>
-                      <TableCell>{sale.customer.name}</TableCell>
+                      <TableCell>Umum</TableCell>
                       <TableCell className="text-right font-medium">{formatCurrency(sale.totalAmount)}</TableCell>
                     </TableRow>
                   ))

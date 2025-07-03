@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Product, Customer } from '@prisma/client';
+import { Product } from '@prisma/client';
 import { processSale } from '@/lib/actions/pos.actions';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,6 @@ import { useDebounce } from '@/hooks/useDebounce';
 
 interface PosClientProps {
   products: Product[];
-  customers: Customer[];
 }
 
 type CartItem = {
@@ -27,7 +26,7 @@ type CartItem = {
   stock: number;
 };
 
-export function PosClient({ products, customers }: PosClientProps) {
+export function PosClient({ products }: PosClientProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
@@ -139,22 +138,6 @@ export function PosClient({ products, customers }: PosClientProps) {
           <CardTitle>Keranjang</CardTitle>
         </CardHeader>
         <CardContent className="flex-grow overflow-y-auto">
-          <div className="mb-4">
-            <Select onValueChange={setSelectedCustomerId} value={selectedCustomerId}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Pelanggan Umum (Default)" />
-              </SelectTrigger>
-              <SelectContent>
-                {customers
-                  .filter((c) => c.name !== 'Pelanggan Umum')
-                  .map((customer) => (
-                    <SelectItem key={customer.id} value={customer.id}>
-                      {customer.name}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </div>
           <div className="mb-4">
             <Select onValueChange={setPaymentMethod} value={paymentMethod}>
               <SelectTrigger className="w-full">

@@ -14,7 +14,6 @@ const getSalesByDateRange = async(from: Date, to: Date) => {
         },
       },
       include: {
-        customer: true, // Sertakan info pelanggan
         user: true, // Sertakan info kasir
         items: {
           include: {

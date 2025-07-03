@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ShoppingCart, Package, Users, BarChart, Tag, Truck, ShoppingBag, AreaChart, Trophy, ClipboardCheck } from 'lucide-react';
+import { Home, ShoppingCart, Package, Users, BarChart, Tag, Truck, ShoppingBag, AreaChart, Trophy, ClipboardCheck, PercentCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { UserNav } from './UserNav';
 import { useSession } from 'next-auth/react';
@@ -14,6 +14,7 @@ const allNavItems = [
   { href: '/dashboard/pos', label: 'Kasir', icon: ShoppingCart, roles: ['ADMIN', 'CASHIER'] },
   { href: '/dashboard/products', label: 'Produk', icon: Package, roles: ['ADMIN', 'CASHIER'] },
   { href: '/dashboard/categories', label: 'Kategori', icon: Tag, roles: ['ADMIN'] },
+  { href: '/dashboard/promotions', label: 'Promosi', icon: PercentCircle, roles: ['ADMIN'] },
   { href: '/dashboard/suppliers', label: 'Supplier', icon: Truck, roles: ['ADMIN'] },
   { href: '/dashboard/purchases', label: 'Order Pembelian', icon: ShoppingBag, roles: ['ADMIN'] },
   { href: '/dashboard/stock-adjustments', label: 'Stok Opname', icon: ClipboardCheck, roles: ['ADMIN'] },
