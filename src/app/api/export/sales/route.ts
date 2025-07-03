@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     const sales = await prisma.sale.findMany({
       where: { saleDate: { gte: fromDate, lte: toDate } },
-      include: { customer: true, items: { include: { product: true } } },
+      include: { items: { include: { product: true } } },
       orderBy: { saleDate: 'desc' },
     });
 
@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
       sale.items.map((item) => ({
         'ID Nota': sale.invoiceNumber,
         Tanggal: sale.saleDate.toLocaleDateString('id-ID'),
-        Pelanggan: sale.customer.name,
         'SKU Produk': item.product.sku,
         'Nama Produk': item.product.name,
         Jumlah: item.quantity,
