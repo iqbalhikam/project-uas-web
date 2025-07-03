@@ -20,29 +20,33 @@ export async function getSuppliers() {
 
 export async function createSupplier(formData: FormData) {
   const adminCheck = await verifyAdmin();
-  if (adminCheck.error) return adminCheck.error;
+  if (adminCheck.error) {
+    return { success: false, message: adminCheck.error };
+  };
   const validatedFields = SupplierSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
-    return { error: 'Data tidak valid.' };
+    return { success: false, message: 'Data tidak valid.' };
   }
 
   try {
     await prisma.supplier.create({ data: validatedFields.data });
     revalidatePath('/dashboard/suppliers');
-    return { message: 'Supplier berhasil ditambahkan.' };
+    return { success: true, message: 'Supplier berhasil ditambahkan.' };
   } catch (error) {
-    return { error: 'Gagal menambahkan supplier.' };
+    return { success: false, message: 'Gagal menambahkan supplier.' };
   }
 }
 
 export async function updateSupplier(id: string, formData: FormData) {
   const adminCheck = await verifyAdmin();
-  if (adminCheck.error) return adminCheck.error;
+  if (adminCheck.error) {
+    return { success: false, message: adminCheck.error };
+  };
   const validatedFields = SupplierSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
-    return { error: 'Data tidak valid.' };
+    return { success: false, message: 'Data tidak valid.' };
   }
 
   try {
@@ -51,20 +55,22 @@ export async function updateSupplier(id: string, formData: FormData) {
       data: validatedFields.data,
     });
     revalidatePath('/dashboard/suppliers');
-    return { message: 'Supplier berhasil diperbarui.' };
+    return {success: true, message: 'Supplier berhasil diperbarui.' };
   } catch (error) {
-    return { error: 'Gagal memperbarui supplier.' };
+    return {success: false, message: 'Gagal memperbarui supplier.' };
   }
 }
 
 export async function deleteSupplier(id: string) {
   const adminCheck = await verifyAdmin();
-    if (adminCheck.error) return adminCheck.error;
+    if (adminCheck.error) {
+      return { success: false, message: adminCheck.error };
+    };
   try {
     await prisma.supplier.delete({ where: { id } });
     revalidatePath('/dashboard/suppliers');
-    return { message: 'Supplier berhasil dihapus.' };
+    return { success: true, message: 'Supplier berhasil dihapus.' };
   } catch (error) {
-    return { error: 'Gagal menghapus supplier.' };
+    return { success: false, message: 'Gagal menghapus supplier.' };
   }
 }

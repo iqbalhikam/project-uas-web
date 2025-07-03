@@ -44,7 +44,7 @@ export function SupplierActions({ supplier }: SupplierActionsProps) {
     toast.promise(promise, {
       loading: supplier ? 'Memperbarui...' : 'Menambahkan...',
       success: (res) => {
-        if (res.error) throw new Error(res.message);
+        if (res.success) throw new Error(res.message);
         setIsDialogOpen(false);
         form.reset();
         return res.message;
@@ -58,7 +58,7 @@ export function SupplierActions({ supplier }: SupplierActionsProps) {
     toast.promise(deleteSupplier(supplier.id), {
       loading: 'Menghapus...',
       success: (res) => {
-        if (res.error) throw new Error(res.error);
+        if (res.success) throw new Error(res.message);
         return res.message;
       },
       error: (err) => err.message,
