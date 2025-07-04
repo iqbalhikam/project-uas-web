@@ -1,3 +1,5 @@
+// src/lib/actions/promotion.actions.ts
+
 'use server';
 
 import prisma from '@/lib/prisma';
@@ -16,9 +18,23 @@ export async function getPromotions() {
         createdAt: 'desc',
       },
     });
-    return { promotions };
-  } catch  {
-    return { success : false, message : 'Gagal memuat data promosi.' };
+
+    // Menambahkan status dinamis pada setiap promosi
+    const promotionsWithDynamicStatus = promotions.map((promo) => {
+      const currentDate = new Date();
+      const endDate = new Date(promo.endDate);
+      const isDateActive = endDate >= currentDate;
+
+      return {
+        ...promo,
+        // Properti baru untuk status yang dinamis
+        isDynamicallyActive: promo.isActive && isDateActive,
+      };
+    });
+
+    return { promotions: promotionsWithDynamicStatus };
+  } catch {
+    return { success: false, message: 'Gagal memuat data promosi.' };
   }
 }
 
@@ -26,13 +42,13 @@ export async function getPromotions() {
 export async function createPromotion(formData: FormData) {
   const adminCheck = await verifyAdmin();
   if (adminCheck.error) {
-    return {success : false, message : adminCheck.error };
+    return { success: false, message: adminCheck.error };
   }
 
   const validatedFields = PromotionSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
-    return {success : false,  errors: validatedFields.error.flatten().fieldErrors };
+    return { success: false, errors: validatedFields.error.flatten().fieldErrors };
   }
 
   const data = {
@@ -45,8 +61,8 @@ export async function createPromotion(formData: FormData) {
     await prisma.promotion.create({ data });
     revalidatePath('/dashboard/promotions');
     return { success: true, message: 'Promosi berhasil ditambahkan.' };
-  } catch  {
-    return {success : false, message: 'Gagal menambahkan promosi.' };
+  } catch {
+    return { success: false, message: 'Gagal menambahkan promosi.' };
   }
 }
 
@@ -54,13 +70,13 @@ export async function createPromotion(formData: FormData) {
 export async function updatePromotion(id: string, formData: FormData) {
   const adminCheck = await verifyAdmin();
   if (adminCheck.error) {
-    return { success : false, message: adminCheck.error };
+    return { success: false, message: adminCheck.error };
   }
 
   const validatedFields = PromotionSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
-    return { success: false, errors: validatedFields.error.flatten().fieldErrors};
+    return { success: false, errors: validatedFields.error.flatten().fieldErrors };
   }
 
   const data = {
@@ -73,7 +89,7 @@ export async function updatePromotion(id: string, formData: FormData) {
     await prisma.promotion.update({ where: { id }, data });
     revalidatePath('/dashboard/promotions');
     return { success: true, message: 'Promosi berhasil diperbarui.' };
-  } catch  {
+  } catch {
     return { success: false, message: 'Gagal memperbarui promosi.' };
   }
 }
@@ -88,8 +104,8 @@ export async function deletePromotion(id: string) {
   try {
     await prisma.promotion.delete({ where: { id } });
     revalidatePath('/dashboard/promotions');
-    return {success: true, message: 'Promosi berhasil dihapus.' };
-  } catch  {
-    return {success: false, message: 'Gagal menghapus promosi.' };
+    return { success: true, message: 'Promosi berhasil dihapus.' };
+  } catch {
+    return { success: false, message: 'Gagal menghapus promosi.' };
   }
 }

@@ -49,7 +49,7 @@ export default async function PromotionsPage() {
                       <TableCell>{`${formatDate(promo.startDate)} - ${formatDate(promo.endDate)}`}</TableCell>
                       <TableCell>{promo.category?.name || 'Semua Produk'}</TableCell>
                       <TableCell>
-                        <Badge variant={promo.isActive ? 'default' : 'secondary'}>{promo.isActive ? 'Aktif' : 'Tidak Aktif'}</Badge>
+                        <Badge variant={promo.isDynamicallyActive ? 'default' : 'secondary'}>{promo.isDynamicallyActive ? 'Aktif' : 'Tidak Aktif'}</Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <PromotionActions promotion={promo} categories={categories} />
