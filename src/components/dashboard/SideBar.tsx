@@ -18,24 +18,29 @@ const allNavItems = [
   { href: '/dashboard/suppliers', label: 'Supplier', icon: Truck, roles: ['ADMIN'] },
   { href: '/dashboard/purchases', label: 'Order Pembelian', icon: ShoppingBag, roles: ['ADMIN'] },
   { href: '/dashboard/stock-adjustments', label: 'Stok Opname', icon: ClipboardCheck, roles: ['ADMIN'] },
-  // Nanti kita bisa tambahkan fitur ini
-  // { href: '/dashboard/stock-adjustments', label: 'Stok Opname', icon: ClipboardCheck, roles: ['ADMIN'] },
   { href: '/dashboard/users', label: 'Pengguna', icon: Users, roles: ['ADMIN'] },
   { href: '/dashboard/reports/sales', label: 'Laporan Penjualan', icon: BarChart, roles: ['ADMIN'] },
   { href: '/dashboard/reports/profit', label: 'Laporan Laba', icon: AreaChart, roles: ['ADMIN'] },
   { href: '/dashboard/reports/bestsellers', label: 'Produk Terlaris', icon: Trophy, roles: ['ADMIN'] },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean; // Tambahkan prop ini
+}
+
+export function Sidebar({ isOpen }: SidebarProps) {
   const pathname = usePathname();
   const{data : session} = useSession();
   const userRole = session?.user.role;
   const navItems = allNavItems.filter(item => item.roles.includes(userRole || ''));
 
   return (
-    <aside className="w-64 bg-sidebar border-r p-4 flex-col hidden md:flex">
+    <aside
+      className={cn(
+        'fixed inset-y-0 left-0 z-20 w-64 bg-sidebar border-r p-4 flex-col transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0',
+        isOpen ? 'translate-x-0' : '-translate-x-full' // Logika buka/tutup
+      )}>
       <div className="flex gap-2">
-        {/* <UserNav /> */}
         <h1 className="text-2xl font-bold mb-8">KasirApp </h1>
         <div className=" flex justify-end w-full h-fit">
           <UserNav />
