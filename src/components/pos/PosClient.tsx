@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Product } from '@prisma/client';
+import { Category, Product, Promotion } from '@prisma/client';
 import { processSale } from '@/lib/actions/pos.actions';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -13,20 +13,26 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Search, Plus, Minus, ScanLine } from 'lucide-react';
 import CameraScanner from '@/components/scanner/CameraScanner'; // <-- Impor komponen scanner
 import { useDebounce } from '@/hooks/useDebounce';
+import { Badge } from '../ui/badge';
+
+type ProductWithCategory = Product & { category: Category };
 
 interface PosClientProps {
-  products: Product[];
+  products: ProductWithCategory[];
+  promotions: Promotion[]; // <-- Terima prop promotions
 }
 
 type CartItem = {
   id: string;
   name: string;
+  originalPrice: number;
   price: number;
   quantity: number;
   stock: number;
+  discountApplied: number;
 };
 
-export function PosClient({ products }: PosClientProps) {
+export function PosClient({ products, promotions }: PosClientProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
@@ -39,9 +45,25 @@ export function PosClient({ products }: PosClientProps) {
     searchInputRef.current?.focus();
     setFilteredProducts(products.filter((product) => product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())));
   }, [debouncedSearchTerm, products]);
-  const addToCart = (product: Product) => {
+
+  const applyPromotion = (product: ProductWithCategory): { finalPrice: number; discount: number } => {
+    // Cari promosi yang relevan (berdasarkan kategori atau semua produk)
+    const applicablePromotions = promotions.filter((p) => p.categoryId === product.categoryId || p.categoryId === null);
+
+    if (applicablePromotions.length === 0) {
+      return { finalPrice: product.sellingPrice, discount: 0 };
+    }
+
+    // Ambil diskon tertinggi dari promosi yang relevan
+    const bestDiscount = Math.max(...applicablePromotions.map((p) => p.discountPercent));
+    const finalPrice = product.sellingPrice * (1 - bestDiscount / 100);
+
+    return { finalPrice, discount: bestDiscount };
+  };
+  const addToCart = (product: ProductWithCategory) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === product.id);
+
       if (existingItem) {
         if (existingItem.quantity < product.stock) {
           return prevCart.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item));
@@ -50,7 +72,22 @@ export function PosClient({ products }: PosClientProps) {
           return prevCart;
         }
       }
-      return [...prevCart, { id: product.id, name: product.name, price: product.sellingPrice, quantity: 1, stock: product.stock }];
+
+      // Terapkan promosi saat pertama kali produk ditambahkan
+      const { finalPrice, discount } = applyPromotion(product);
+
+      return [
+        ...prevCart,
+        {
+          id: product.id,
+          name: product.name,
+          originalPrice: product.sellingPrice,
+          price: finalPrice,
+          quantity: 1,
+          stock: product.stock,
+          discountApplied: discount,
+        },
+      ];
     });
   };
 
@@ -106,6 +143,14 @@ export function PosClient({ products }: PosClientProps) {
       toast.error(`Produk dengan SKU "${scannedSku}" tidak ditemukan.`);
     }
   };
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(value);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-8rem)]">
       {isScannerOpen && <CameraScanner onScanSuccess={handleScanSuccess} onClose={() => setIsScannerOpen(false)} />}
@@ -122,7 +167,7 @@ export function PosClient({ products }: PosClientProps) {
         </div>
         <div className="p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto h-[calc(100%-4.5rem)]">
           {filteredProducts.map((product) => (
-            <Card key={product.id} className="cursor-pointer hover:shadow-lg transition-shadow max-h-[50%]" onClick={() => addToCart(product)}>
+            <Card key={product.id} className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => addToCart(product)}>
               <CardContent className="p-4 text-center">
                 <p className="font-semibold text-sm">{product.name}</p>
                 <p className="text-xs text-muted-foreground">Stok: {product.stock}</p>
@@ -162,7 +207,15 @@ export function PosClient({ products }: PosClientProps) {
             <TableBody>
               {cart.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <div>{item.name}</div>
+                    {item.discountApplied > 0 && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground line-through">{formatCurrency(item.originalPrice)}</span>
+                        <Badge variant="destructive">-{item.discountApplied}%</Badge>
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-1">
                       <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => updateQuantity(item.id, -1)}>

@@ -38,6 +38,30 @@ export async function getPromotions() {
   }
 }
 
+// Mengambil promosi berdasarkan ID
+export async function getActivePromotions() {
+  try {
+    const currentDate = new Date();
+    const promotions = await prisma.promotion.findMany({
+      where: {
+        isActive: true,
+        startDate: {
+          lte: currentDate, // Tanggal mulai harus kurang dari atau sama dengan hari ini
+        },
+        endDate: {
+          gte: currentDate, // Tanggal selesai harus lebih dari atau sama dengan hari ini
+        },
+      },
+      include: {
+        category: true,
+      },
+    });
+    return { promotions };
+  } catch {
+    return { error: 'Gagal memuat data promosi aktif.' };
+  }
+}
+
 // Membuat promosi baru
 export async function createPromotion(formData: FormData) {
   const adminCheck = await verifyAdmin();

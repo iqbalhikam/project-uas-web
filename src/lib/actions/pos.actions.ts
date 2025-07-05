@@ -7,16 +7,22 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { authOptions } from '../auth';
+import { getActivePromotions } from './promotion.actions';
 
 // Aksi untuk mengambil data awal yang dibutuhkan halaman POS
 export async function getPosData() {
   try {
-    const products = await prisma.product.findMany({
-      where: { stock: { gt: 0 } },
-      orderBy: { name: 'asc' },
-    });
-    // HAPUS BARIS INI: const customers = await prisma.customer.findMany(...);
-    return { products }; // Hapus 'customers' dari return
+    // Ambil produk dan promosi aktif secara bersamaan
+    const [productsData, promotionsData] = await Promise.all([
+      prisma.product.findMany({
+        where: { stock: { gt: 0 } },
+        orderBy: { name: 'asc' },
+        include: { category: true }, // Pastikan kategori di-include
+      }),
+      getActivePromotions(),
+    ]);
+
+    return { products: productsData, promotions: promotionsData.promotions || [] };
   } catch (error) {
     return { error: 'Gagal memuat data untuk POS.' };
   }
