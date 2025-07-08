@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-  <h1><b>KasirApp 🛒</b></h1>
+  <h1><b>KasirPintar 🛒</b></h1>
   <p>
     Modern, Cepat, dan Intuitif. Solusi Point of Sale (POS) berbasis web yang dirancang untuk merevolusi cara Anda mengelola bisnis.
   </p>
@@ -9,14 +9,14 @@
 
 ## ✨ Tentang Proyek
 
-**KasirApp** adalah aplikasi kasir (Point of Sale) lengkap yang dibangun dengan tumpukan teknologi modern. Aplikasi ini tidak hanya berfungsi untuk mencatat transaksi penjualan, tetapi juga sebagai sistem manajemen inventaris, pelanggan, dan laporan yang terintegrasi. Dengan antarmuka yang bersih dan responsif, KasirApp memberikan pengalaman pengguna yang luar biasa baik untuk kasir maupun admin.
+**KasirPintar** adalah aplikasi kasir (Point of Sale) lengkap yang dibangun dengan tumpukan teknologi modern. Aplikasi ini tidak hanya berfungsi untuk mencatat transaksi penjualan, tetapi juga sebagai sistem manajemen inventaris, pelanggan, dan laporan yang terintegrasi. Dengan antarmuka yang bersih dan responsif, KasirPintar memberikan pengalaman pengguna yang luar biasa baik untuk kasir maupun admin.
 
 Proyek ini dibuat sebagai implementasi dari konsep-konsep terbaru dalam pengembangan web, termasuk *server-side rendering*, *server actions*, dan arsitektur berbasis komponen dengan Next.js dan Shadcn/UI.
 
 <br/>
 
 <div align="center">
-  <img src="./videokasirpintar-ezgif.com-video-to-gif-converter.gif" alt="Screenshot KasirApp" style="border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+  <img src="./videokasirpintar-ezgif.com-video-to-gif-converter.gif" alt="Screenshot KasirPintar" style="border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
   <p><small><i>Gambar tampilan dashboard</i></small></p>
 </div>
 
