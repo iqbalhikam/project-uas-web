@@ -40,7 +40,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
         isOpen ? 'translate-x-0' : '-translate-x-full' 
       )}>
       <div className="flex gap-2">
-        <h1 className="text-2xl font-bold mb-8">KasirApp </h1>
+        <h1 className="text-2xl font-bold mb-8">KasirPintar </h1>
         <div className=" flex justify-end w-full h-fit">
           <UserNav />
         </div>
