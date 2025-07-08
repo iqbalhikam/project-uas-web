@@ -16,7 +16,7 @@ Proyek ini dibuat sebagai implementasi dari konsep-konsep terbaru dalam pengemba
 <br/>
 
 <div align="center">
-  <img src="https://placehold.co/800x400/8b5cf6/ffffff?text=Screenshot+Aplikasi+Anda" alt="Screenshot KasirApp" style="border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+  <img src="./videokasirpintar-ezgif.com-video-to-gif-converter.gif" alt="Screenshot KasirApp" style="border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
   <p><small><i>(Ganti gambar ini dengan screenshot aplikasi Anda)</i></small></p>
 </div>
 
