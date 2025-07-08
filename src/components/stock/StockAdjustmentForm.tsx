@@ -1,4 +1,4 @@
-// src/components/stock/StockAdjustmentForm.tsx
+
 'use client';
 
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -24,7 +24,7 @@ export function StockAdjustmentForm({ products }: StockAdjustmentFormProps) {
         productId: product.id,
         productName: product.name,
         currentStock: product.stock,
-        physicalCount: product.stock, // Defaultnya sama dengan stok sistem
+        physicalCount: product.stock, 
       })),
     },
   });
@@ -35,7 +35,7 @@ export function StockAdjustmentForm({ products }: StockAdjustmentFormProps) {
   });
 
   const onSubmit = async (values: StockAdjustmentFormData) => {
-    // Filter hanya item yang stok fisiknya berbeda dari stok sistem
+    
     const changedItems = values.items
       .filter((item) => item.physicalCount !== item.currentStock)
       .map((item) => ({
@@ -48,14 +48,14 @@ export function StockAdjustmentForm({ products }: StockAdjustmentFormProps) {
       return;
     }
 
-    const reason = 'Stok Opname Berkala'; // Bisa juga ditambahkan input untuk alasan
+    const reason = 'Stok Opname Berkala'; 
 
     toast.promise(adjustStock(changedItems, reason), {
       loading: 'Menyimpan penyesuaian...',
       success: (res) => {
         if (res.error) throw new Error(res.error);
-        // Reset form or refetch data after successful submission
-        // Untuk sekarang, kita cukup reload halaman
+        
+        
         window.location.reload();
         return res.message;
       },

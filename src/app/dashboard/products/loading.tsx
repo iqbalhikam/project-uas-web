@@ -1,6 +1,4 @@
-// src/app/dashboard/products/loading.tsx
-
-import { Skeleton } from '@/components/ui/skeleton'; // Asumsi Anda memiliki komponen Skeleton
+import { Skeleton } from '@/components/ui/skeleton'; 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default function ProductsLoading() {

@@ -1,5 +1,3 @@
-// src/app/dashboard/purchases/page.tsx
-
 import { getPurchaseOrders } from '@/lib/actions/purchase.actions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -12,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-// Fungsi helper untuk format mata uang
+
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -21,7 +19,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-// Fungsi helper untuk warna status
+
 const getStatusVariant = (status: string) => {
   switch (status) {
     case 'COMPLETED':
@@ -35,16 +33,16 @@ const getStatusVariant = (status: string) => {
 };
 
 export default async function PurchasesPage() {
-  // Ambil semua data yang diperlukan untuk form dan halaman
+  
   const { purchaseOrders, error } = await getPurchaseOrders();
   const { suppliers } = await getSuppliers();
-  const { products } = await getProducts(); // Mengambil semua produk untuk form
+  const { products } = await getProducts(); 
 
   if (error) {
     return <div className="p-8 text-red-500">{error}</div>;
   }
 
-  // Pastikan data yang dibutuhkan form tersedia
+  
   if (!suppliers || !products) {
     return <div className="p-8">Gagal memuat data supplier atau produk.</div>;
   }

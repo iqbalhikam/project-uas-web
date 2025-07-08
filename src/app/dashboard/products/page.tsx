@@ -1,4 +1,4 @@
-// src/app/dashboard/products/page.tsx (FINAL FIX)
+
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCategories, getProducts } from '@/lib/actions/product.actions';
@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
-// Definisikan tipe props sesuai standar Next.js 15
-// Perhatikan bahwa searchParams sekarang adalah sebuah Promise
+
+
 interface ProductsPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -22,7 +22,7 @@ const formatCurrency = (amount: number) => {
 };
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  // "Buka" promise untuk mendapatkan objek searchParams yang sebenarnya
+  
   const currentSearchParams = await searchParams;
   const currentPage = Number(currentSearchParams?.page) || 1;
   const limit = 10;

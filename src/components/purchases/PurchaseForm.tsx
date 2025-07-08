@@ -1,4 +1,4 @@
-// src/components/purchases/PurchaseForm.tsx
+
 'use client';
 
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -41,7 +41,7 @@ export function PurchaseForm({ suppliers, products, onClose }: PurchaseFormProps
         if (typeof res === 'object' && res.error) throw new Error(res.error);
         onClose();
         if (typeof res === 'object' && res.message) return res.message;
-        // return res.message;
+        
       },
       error: (err) => err.message,
     });

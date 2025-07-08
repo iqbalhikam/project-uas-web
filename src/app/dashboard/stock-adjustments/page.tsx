@@ -1,12 +1,10 @@
-// src/app/dashboard/stock-adjustments/page.tsx
-
 import { getProducts } from '@/lib/actions/product.actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { StockAdjustmentForm } from '@/components/stock/StockAdjustmentForm';
 
 export default async function StockAdjustmentPage() {
-  // Kita perlu mengambil semua produk untuk ditampilkan di form
-  const { products, error } = await getProducts(1, 1000); // Ambil semua produk, sesuaikan limit jika perlu
+  
+  const { products, error } = await getProducts(1, 1000); 
 
   if (error || !products) {
     return <div className="p-8 text-red-500">{error || 'Gagal memuat data produk.'}</div>;

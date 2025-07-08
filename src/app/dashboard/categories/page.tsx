@@ -1,5 +1,3 @@
-// app/dashboard/categories/page.tsx
-
 import { getCategories } from '@/lib/actions/category.actions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -14,7 +12,7 @@ interface CategoriesPageProps {
 }
 
 export default async function CategoriesPage( { searchParams }: CategoriesPageProps ) {
-  // const { categories, error } = await getCategories();
+  
   const currentSearchParams = await searchParams;
   const currentPage = Number(currentSearchParams?.page) || 1;
   const limit = 5;

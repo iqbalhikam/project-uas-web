@@ -25,7 +25,7 @@ export function PromotionForm({ promotion, categories, onClose }: PromotionFormP
     defaultValues: {
       description: promotion?.description || '',
       discountPercent: promotion?.discountPercent || 0,
-      // Format tanggal agar sesuai dengan input type="date"
+      
       startDate: promotion ? new Date(promotion.startDate).toISOString().split('T')[0] : '',
       endDate: promotion ? new Date(promotion.endDate).toISOString().split('T')[0] : '',
       isActive: promotion?.isActive ?? true,
@@ -36,7 +36,7 @@ export function PromotionForm({ promotion, categories, onClose }: PromotionFormP
   const onSubmit = async (values: PromotionFormData) => {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
-      // Pastikan nilai boolean juga dikonversi ke string
+      
       if (value !== null && value !== undefined) {
         formData.append(key, String(value));
       }

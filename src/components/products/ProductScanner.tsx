@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { ScanLine } from 'lucide-react';
 
-// Dynamic import tetap dipertahankan, ini adalah praktik yang baik.
+
 const CameraScanner = dynamic(() => import('@/components/scanner/CameraScanner'), {
   ssr: false,
 });
@@ -18,9 +18,9 @@ export function ProductScanner({ onScan }: ProductScannerProps) {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
-  // INI ADALAH KUNCINYA:
-  // useEffect ini hanya akan berjalan di client-side.
-  // Setelah dijalankan, kita set isClient menjadi true.
+  
+  
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -37,8 +37,8 @@ export function ProductScanner({ onScan }: ProductScannerProps) {
     setIsScannerOpen(false);
   }, []);
 
-  // Jika kita belum di client, JANGAN RENDER APAPUN yang berhubungan dengan scanner.
-  // Render tombol yang non-aktif untuk menjaga tata letak (layout).
+  
+  
   if (!isClient) {
     return (
       <Button type="button" variant="outline" size="icon" className="p-2" disabled>
@@ -47,7 +47,7 @@ export function ProductScanner({ onScan }: ProductScannerProps) {
     );
   }
 
-  // Kode di bawah ini hanya akan berjalan setelah component "mounted" di browser.
+  
   return (
     <>
       <Button type="button" onClick={() => setIsScannerOpen(true)} variant="outline" size="icon" className="p-2" aria-label="Buka pemindai barcode">

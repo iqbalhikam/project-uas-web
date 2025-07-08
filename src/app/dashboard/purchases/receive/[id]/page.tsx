@@ -1,5 +1,3 @@
-// src/app/dashboard/purchases/receive/[id]/page.tsx
-
 import { getPurchaseOrderById } from '@/lib/actions/purchase.actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GoodsReceiptForm } from '@/components/purchases/GoodsReceiptForm';

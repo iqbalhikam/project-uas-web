@@ -1,4 +1,3 @@
-// src/components/dashboard/Sidebar.tsx
 'use client';
 
 import Link from 'next/link';
@@ -8,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { UserNav } from './UserNav';
 import { useSession } from 'next-auth/react';
 
-// Daftar item navigasi
+
 const allNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home, roles: ['ADMIN', 'CASHIER'] },
   { href: '/dashboard/pos', label: 'Kasir', icon: ShoppingCart, roles: ['ADMIN', 'CASHIER'] },
@@ -25,7 +24,7 @@ const allNavItems = [
 ];
 
 interface SidebarProps {
-  isOpen: boolean; // Tambahkan prop ini
+  isOpen: boolean; 
 }
 
 export function Sidebar({ isOpen }: SidebarProps) {
@@ -38,7 +37,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
     <aside
       className={cn(
         'fixed inset-y-0 left-0 z-20 w-64 bg-sidebar border-r p-4 flex-col transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0',
-        isOpen ? 'translate-x-0' : '-translate-x-full' // Logika buka/tutup
+        isOpen ? 'translate-x-0' : '-translate-x-full' 
       )}>
       <div className="flex gap-2">
         <h1 className="text-2xl font-bold mb-8">KasirApp </h1>

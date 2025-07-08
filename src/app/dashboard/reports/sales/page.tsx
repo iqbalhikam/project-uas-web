@@ -17,7 +17,7 @@ export default async function SalesReportPage({ searchParams }: SalesReportPageP
   const from = currentSearchParams?.from ? new Date(String(currentSearchParams.from)) : undefined;
   const to = currentSearchParams?.to ? new Date(String(currentSearchParams.to)) : undefined;
 
-  // ... (sisa kode tidak berubah)
+  
   const dateFrom = from || new Date(new Date().setMonth(new Date().getMonth() - 1));
   const dateTo = to || new Date();
 

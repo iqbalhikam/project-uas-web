@@ -13,7 +13,7 @@ import { PromotionForm } from './PromotionForm';
 
 interface PromotionActionsProps {
   promotion?: Promotion;
-  categories: Category[]; // Selalu butuh daftar kategori untuk form
+  categories: Category[]; 
 }
 
 export function PromotionActions({ promotion, categories }: PromotionActionsProps) {
@@ -33,7 +33,7 @@ export function PromotionActions({ promotion, categories }: PromotionActionsProp
     });
   };
 
-  // Tombol "Tambah Promosi"
+  
   if (!promotion) {
     return (
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -52,7 +52,7 @@ export function PromotionActions({ promotion, categories }: PromotionActionsProp
     );
   }
 
-  // Tombol "Edit" dan "Hapus" per baris
+  
   return (
     <>
       <div className="flex gap-2">

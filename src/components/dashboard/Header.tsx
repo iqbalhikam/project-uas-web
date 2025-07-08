@@ -1,4 +1,4 @@
-// src/components/dashboard/Header.tsx
+
 'use client';
 
 import { Menu } from 'lucide-react';
@@ -15,7 +15,6 @@ export function Header({ onMenuClick }: HeaderProps) {
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle Menu</span>
       </Button>
-      {/* Anda bisa menambahkan elemen lain di sini, seperti judul halaman dinamis */}
     </header>
   );
 }

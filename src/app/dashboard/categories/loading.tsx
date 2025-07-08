@@ -1,5 +1,3 @@
-// src/app/dashboard/products/loading.tsx
-
 import { CategoryActions } from '@/components/categories/CategoryActions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton'; // Asumsi Anda memiliki komponen Skeleton

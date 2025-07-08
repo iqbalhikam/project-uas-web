@@ -14,7 +14,7 @@ const formatCurrency = (amount: number) =>
   }).format(amount);
 
 type ProfitReportPageProps = {
-  // params tidak digunakan di halaman ini, tapi searchParams iya
+  
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 export default async function ProfitReportPage({ searchParams }: ProfitReportPageProps) {
@@ -28,7 +28,7 @@ export default async function ProfitReportPage({ searchParams }: ProfitReportPag
 
   const report = await getProfitReport(dateFrom, dateTo);
 
-  // ... (sisa kode tidak berubah)
+  
   if (report.error) {
     return <div className="p-8 text-red-500">{report.error}</div>;
   }

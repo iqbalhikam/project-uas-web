@@ -1,4 +1,4 @@
-// components/suppliers/SupplierActions.tsx
+
 'use client';
 
 import { useState } from 'react';
@@ -34,7 +34,7 @@ export function SupplierActions({ supplier }: SupplierActionsProps) {
 
   const onSubmit = async (values: SupplierFormData) => {
     const formData = new FormData();
-    // Loop untuk mengisi formData dari values
+    
     (Object.keys(values) as Array<keyof SupplierFormData>).forEach((key) => {
       formData.append(key, values[key] || '');
     });

@@ -1,4 +1,3 @@
-// components/categories/CategoryActions.tsx
 'use client';
 
 import { useState } from 'react';
@@ -39,7 +38,7 @@ export function CategoryActions({ category }: CategoryActionsProps) {
     toast.promise(promise, {
       loading: category ? 'Memperbarui...' : 'Menambahkan...',
       success: (res) => {
-        // **PERBAIKAN DI SINI**
+        
         if (typeof res === 'object' && res !== null && 'error' in res && res.error) {
           throw new Error(String(res.error));
         }

@@ -1,4 +1,3 @@
-// components/pos/PosClient.tsx
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -11,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Plus, Minus, ScanLine } from 'lucide-react';
-import CameraScanner from '@/components/scanner/CameraScanner'; // <-- Impor komponen scanner
+import CameraScanner from '@/components/scanner/CameraScanner'; 
 import { useDebounce } from '@/hooks/useDebounce';
 import { Badge } from '../ui/badge';
 
@@ -19,7 +18,7 @@ type ProductWithCategory = Product & { category: Category };
 
 interface PosClientProps {
   products: ProductWithCategory[];
-  promotions: Promotion[]; // <-- Terima prop promotions
+  promotions: Promotion[]; 
 }
 
 type CartItem = {
@@ -38,7 +37,7 @@ export function PosClient({ products, promotions }: PosClientProps) {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<string>('');
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const debouncedSearchTerm = useDebounce(searchTerm, 300); // Debounce 300ms
+  const debouncedSearchTerm = useDebounce(searchTerm, 300); 
   const [filteredProducts, setFilteredProducts] = useState(products);
   const searchInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -47,14 +46,14 @@ export function PosClient({ products, promotions }: PosClientProps) {
   }, [debouncedSearchTerm, products]);
 
   const applyPromotion = (product: ProductWithCategory): { finalPrice: number; discount: number } => {
-    // Cari promosi yang relevan (berdasarkan kategori atau semua produk)
+    
     const applicablePromotions = promotions.filter((p) => p.categoryId === product.categoryId || p.categoryId === null);
 
     if (applicablePromotions.length === 0) {
       return { finalPrice: product.sellingPrice, discount: 0 };
     }
 
-    // Ambil diskon tertinggi dari promosi yang relevan
+    
     const bestDiscount = Math.max(...applicablePromotions.map((p) => p.discountPercent));
     const finalPrice = product.sellingPrice * (1 - bestDiscount / 100);
 
@@ -73,7 +72,7 @@ export function PosClient({ products, promotions }: PosClientProps) {
         }
       }
 
-      // Terapkan promosi saat pertama kali produk ditambahkan
+      
       const { finalPrice, discount } = applyPromotion(product);
 
       return [
@@ -111,22 +110,22 @@ export function PosClient({ products, promotions }: PosClientProps) {
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
-    // Cek jika metode pembayaran belum dipilih
+    
     if (!paymentMethod) {
       toast.error('Metode pembayaran harus dipilih.');
       return;
     }
 
-    // Kirim selectedCustomerId (bisa jadi string kosong) ke backend
+    
     const promise = processSale(cart, selectedCustomerId, totalAmount, paymentMethod);
     toast.promise(promise, {
       loading: 'Memproses transaksi...',
       success: (res) => {
         if (res.error) throw new Error(res.error);
-        // Reset state setelah berhasil
+        
         setCart([]);
         setSelectedCustomerId('');
-        // Jangan reset metode pembayaran, karena kemungkinan sama untuk transaksi berikutnya
+        
         return res.success;
       },
       error: (err) => err.message,
@@ -134,7 +133,7 @@ export function PosClient({ products, promotions }: PosClientProps) {
   };
 
   const handleScanSuccess = (scannedSku: string) => {
-    setIsScannerOpen(false); // Tutup scanner setelah berhasil
+    setIsScannerOpen(false); 
     const product = products.find((p) => p.sku === scannedSku);
     if (product) {
       addToCart(product);

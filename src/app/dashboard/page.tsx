@@ -1,4 +1,3 @@
-// app/dashboard/page.tsx
 import { getDashboardStats } from '@/lib/actions/dashboard.actions';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
@@ -7,7 +6,7 @@ import { DollarSign, Package,  CreditCard } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { id } from 'date-fns/locale';
 
-// Fungsi helper untuk format mata uang
+
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -19,7 +18,7 @@ const formatCurrency = (amount: number) => {
 export default async function DashboardPage() {
   const stats = await getDashboardStats();
 
-  // Jika terjadi error saat fetch data, tampilkan pesan
+  
   if (stats.error) {
     return <div className="p-8 text-center text-red-500">{stats.error}</div>;
   }

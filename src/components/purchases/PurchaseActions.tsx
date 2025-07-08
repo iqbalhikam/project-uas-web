@@ -1,11 +1,11 @@
-// src/components/purchases/PurchaseActions.tsx
+
 'use client';
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { PlusCircle } from 'lucide-react';
- // Form yang akan kita buat selanjutnya
+ 
 import type { Supplier, Product } from '@prisma/client';
 import { PurchaseForm } from './PurchaseForm';
 

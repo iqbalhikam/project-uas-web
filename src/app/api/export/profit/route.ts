@@ -1,10 +1,10 @@
-// src/app/api/export/profit/route.ts
+
 
 import { NextRequest, NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 import { getProfitReport } from '@/lib/actions/report.actions';
 
-// Memastikan route ini selalu dinamis dan tidak di-cache
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: report.error || 'Gagal membuat laporan' }, { status: 500 });
     }
 
-    // --- PERSIAPAN DATA ---
+    
 
     const worksheetData = [
       ['Laporan Laba Rugi'],
@@ -44,40 +44,40 @@ export async function GET(request: NextRequest) {
       totalQty += item.quantitySold;
     });
 
-    worksheetData.push([]); // Baris pemisah
+    worksheetData.push([]); 
     worksheetData.push(['TOTAL', totalQty, report.totalRevenue, report.totalCostOfGoods, report.totalProfit]);
 
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
     const lastRow = worksheetData.length;
 
-    // --- APLIKASI GAYA DAN FORMAT (METODE ANDAL) ---
+    
 
-    // Format mata uang standar
+    
     const currencyFormat = '"Rp"#,##0_);[Red]-"Rp"#,##0';
-    // Format mata uang hijau untuk nilai positif (laba)
+    
     const profitFormat = '[Green]"Rp"#,##0_);[Red]-"Rp"#,##0';
 
-    // Terapkan format pada ringkasan
+    
     worksheet['B5'].z = currencyFormat;
     worksheet['B6'].z = currencyFormat;
     worksheet['B7'].z = profitFormat;
 
-    // Terapkan format pada rincian data
+    
     for (let i = 11; i < lastRow - 1; i++) {
-      worksheet[`C${i}`].z = currencyFormat; // Pendapatan
-      worksheet[`D${i}`].z = currencyFormat; // Modal
-      worksheet[`E${i}`].z = profitFormat; // Laba
+      worksheet[`C${i}`].z = currencyFormat; 
+      worksheet[`D${i}`].z = currencyFormat; 
+      worksheet[`E${i}`].z = profitFormat; 
     }
 
-    // Terapkan format pada baris TOTAL
+    
     worksheet[`C${lastRow}`].z = currencyFormat;
     worksheet[`D${lastRow}`].z = currencyFormat;
     worksheet[`E${lastRow}`].z = profitFormat;
 
-    // Atur lebar kolom
+    
     worksheet['!cols'] = [{ wch: 45 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 20 }];
 
-    // Gabungkan sel untuk judul
+    
     worksheet['!merges'] = [
       { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
       { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } },

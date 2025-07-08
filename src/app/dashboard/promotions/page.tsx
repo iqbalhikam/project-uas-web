@@ -1,4 +1,4 @@
-// src/app/dashboard/promotions/page.tsx
+
 
 import { getPromotions } from '@/lib/actions/promotion.actions';
 import { getCategories } from '@/lib/actions/product.actions';
@@ -9,11 +9,11 @@ import { PromotionActions } from '@/components/promotions/PromotionActions';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
-// Fungsi helper untuk format tanggal
+
 const formatDate = (date: Date) => format(date, 'dd MMM yyyy', { locale: id });
 
 export default async function PromotionsPage() {
-  // Ambil data promosi dan kategori secara bersamaan
+  
   const [{ promotions, success: promoError }, { categories, error: catError }] = await Promise.all([getPromotions(), getCategories()]);
 
   if (promoError || catError || !promotions || !categories) {

@@ -1,5 +1,3 @@
-// src/app/dashboard/settings/page.tsx
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function SettingsPage() {
@@ -15,7 +13,6 @@ export default function SettingsPage() {
           <CardDescription>Informasi ini akan ditampilkan secara publik.</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Di sini Anda bisa menambahkan form untuk mengubah nama, email, atau password */}
           <p>Form untuk pengaturan profil akan ada di sini.</p>
         </CardContent>
       </Card>
@@ -25,7 +22,6 @@ export default function SettingsPage() {
           <CardDescription>Sesuaikan tampilan aplikasi.</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Di sini Anda bisa menambahkan opsi untuk mengganti tema (terang/gelap) */}
           <p>Opsi untuk tema (terang/gelap) akan ada di sini.</p>
         </CardContent>
       </Card>

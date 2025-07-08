@@ -1,55 +1,38 @@
-
 'use client';
 
 import { useState } from 'react';
 import { Category, Product } from '@prisma/client';
 import { toast } from 'sonner';
-
-
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { MoreHorizontal } from 'lucide-react';
-
-
 import { deleteProduct } from '@/lib/actions/product.actions';
 import { ProductForm } from './ProductForm';
 
-
-
 interface ProductActionsProps {
   categories: Category[];
-  product?: Product; 
+  product?: Product;
 }
 
 export function ProductActions({ categories, product }: ProductActionsProps) {
-  
   const [isFormOpen, setIsFormOpen] = useState(false);
-  
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-
   const handleDelete = async () => {
     if (!product) return;
-
-    
     const toastId = toast.loading('Menghapus produk...');
-
-    
     const result = await deleteProduct(product.id);
 
-    
     if (result.success) {
       toast.error(result.message, { id: toastId });
     } else {
       toast.success(result.message, { id: toastId });
     }
 
-    setIsAlertOpen(false); 
+    setIsAlertOpen(false);
   };
 
-
-  
   if (!product) {
     return (
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -66,7 +49,6 @@ export function ProductActions({ categories, product }: ProductActionsProps) {
     );
   }
 
-  
   return (
     <>
       <DropdownMenu>
@@ -90,11 +72,7 @@ export function ProductActions({ categories, product }: ProductActionsProps) {
           <DialogHeader>
             <DialogTitle>Edit Produk</DialogTitle>
           </DialogHeader>
-          <ProductForm
-            categories={categories}
-            product={product} 
-            onClose={() => setIsFormOpen(false)}
-          />
+          <ProductForm categories={categories} product={product} onClose={() => setIsFormOpen(false)} />
         </DialogContent>
       </Dialog>
 

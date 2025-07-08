@@ -1,4 +1,3 @@
-// src/app/dashboard/layout.tsx
 'use client';
 import { Header } from '@/components/dashboard/Header';
 import { Sidebar } from '@/components/dashboard/SideBar'; // Komponen yang akan kita buat

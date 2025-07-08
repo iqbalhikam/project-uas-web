@@ -1,11 +1,11 @@
-// src/components/scanner/CameraScanner.tsx
+
 'use client';
 
 import React, { useEffect, useRef } from 'react';
 import { Html5QrcodeScanner, QrcodeErrorCallback, QrcodeSuccessCallback } from 'html5-qrcode';
 import { toast } from 'sonner';
 
-// ... (Interface dan konstanta tetap sama)
+
 interface CameraScannerProps {
   onScanSuccess: (result: string) => void;
   onClose: () => void;
@@ -28,19 +28,19 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
     };
 
     const errorCallback: QrcodeErrorCallback = () => {
-      // Abaikan
+      
     };
 
-    // --- KONFIGURASI SUPER CEPAT ---
+    
     const config = {
-      // 1. Keseimbangan FPS yang baik dengan resolusi tinggi
+      
       fps: 30,
 
-      // 2. [OPTIMASI] qrbox dibuat dinamis
+      
       qrbox: () => {
-        // Tentukan ukuran kotak sebagai 70% dari dimensi terkecil (lebar atau tinggi)
-        // Ini memastikan kotak selalu pas dan berbentuk persegi
-        // const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.7;
+        
+        
+        
         return {
           width: 300,
           height: 300,
@@ -51,7 +51,7 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
       supportedScanTypes: [
       ],
 
-      // 3. [OPTIMASI TERPENTING] Nonaktifkan pengecekan cermin
+      
       disableFlip: true,
 
       videoConstraints: {
@@ -62,7 +62,7 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
       },
     } as never;
 
-    // ... (sisa kode useEffect tetap sama)
+    
     try {
       scannerRef.current = new Html5QrcodeScanner(qrcodeRegionId, config, false);
       scannerRef.current.render(successCallback, errorCallback);
@@ -81,7 +81,7 @@ export default function CameraScanner({ onScanSuccess, onClose }: CameraScannerP
     };
   }, [onScanSuccess, onClose]);
 
-  // JSX tidak perlu diubah
+  
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ position: 'relative', width: '90%', maxWidth: '600px', background: 'white', padding: '20px', borderRadius: '8px' }}>

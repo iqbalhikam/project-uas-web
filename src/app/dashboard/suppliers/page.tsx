@@ -1,5 +1,3 @@
-// app/dashboard/suppliers/page.tsx
-
 import { getSuppliers } from '@/lib/actions/supplier.actions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';

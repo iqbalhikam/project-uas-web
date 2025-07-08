@@ -1,4 +1,4 @@
-// src/components/purchases/GoodsReceiptForm.tsx
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -12,9 +12,9 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { receivePurchaseOrder } from '@/lib/actions/purchase.actions'; // Akan kita buat
+import { receivePurchaseOrder } from '@/lib/actions/purchase.actions'; 
 
-// Definisikan tipe gabungan untuk item di PO
+
 type POItemWithProduct = PurchaseOrderItem & { product: Product };
 type POWithDetails = PurchaseOrder & { items: POItemWithProduct[]; supplier: Supplier };
 
@@ -22,7 +22,7 @@ interface GoodsReceiptFormProps {
   purchaseOrder: POWithDetails;
 }
 
-// Skema validasi untuk form
+
 const FormSchema = z.object({
   items: z.array(
     z.object({
@@ -43,7 +43,7 @@ export function GoodsReceiptForm({ purchaseOrder }: GoodsReceiptFormProps) {
       items: purchaseOrder.items.map((item) => ({
         purchaseOrderItemId: item.id,
         productId: item.productId,
-        quantityReceived: item.quantity, // Defaultnya sama dengan jumlah order
+        quantityReceived: item.quantity, 
       })),
     },
   });
@@ -53,7 +53,7 @@ export function GoodsReceiptForm({ purchaseOrder }: GoodsReceiptFormProps) {
       loading: 'Memproses penerimaan barang...',
       success: (res) => {
         if (res.error) throw new Error(res.error);
-        router.push('/dashboard/purchases'); // Kembali ke daftar PO
+        router.push('/dashboard/purchases'); 
         return res.message;
       },
       error: (err) => err.message,

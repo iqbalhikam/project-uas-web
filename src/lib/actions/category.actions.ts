@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// lib/actions/category.actions.ts
 'use server';
 
 import prisma from '@/lib/prisma';
@@ -13,15 +11,15 @@ export async function getCategories(page = 1, limit = 10) {
     const [categories, totalCategories] = await prisma.$transaction([
       prisma.category.findMany({
         skip: skip,
-        take: limit, // Batasi jumlah data yang diambil
+        take: limit, 
         orderBy: {
           createdAt: 'desc',
         },
       }),
-      prisma.category.count(), // Hitung total produk untuk paginasi
+      prisma.category.count(), 
     ]);
     return { categories, totalCategories };
-  } catch (error) {
+  } catch {
     return { error: 'Gagal memuat kategori' };
   }
 }
@@ -55,7 +53,7 @@ export async function createCategory(formData: FormData) {
 
     revalidatePath('/dashboard/categories');
     return { message: 'Kategori berhasil ditambahkan.' };
-  } catch (error) {
+  } catch {
     return { error: 'Gagal menambahkan kategori.' };
   }
 }
@@ -82,7 +80,7 @@ export async function updateCategory(id: string, formData: FormData) {
 
     revalidatePath('/dashboard/categories');
     return { message: 'Kategori berhasil diperbarui.' };
-  } catch (error) {
+  } catch {
     return { error: 'Gagal memperbarui kategori.' };
   }
 }
@@ -97,7 +95,6 @@ export async function deleteCategory(id: string) {
     revalidatePath('/dashboard/categories');
     return { message: 'Kategori berhasil dihapus.' };
   } catch (error) {
-    // Cek jika error karena ada relasi dengan produk
     if (error instanceof Error && error.message.includes('foreign key constraint')) {
       return { error: 'Tidak bisa menghapus kategori ini karena masih digunakan oleh produk.' };
     }

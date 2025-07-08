@@ -1,4 +1,3 @@
-// src/components/dashboard/UserNav.tsx
 'use client';
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -15,8 +14,6 @@ export function UserNav() {
   if (!session?.user) {
     return null;
   }
-
-  // Ambil inisial dari nama pengguna untuk fallback avatar
   const initials = session.user.name
     ?.split(' ')
     .map((n) => n[0])
@@ -28,7 +25,6 @@ export function UserNav() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-10 w-10 rounded-full ">
             <Avatar className="h-10 w-10 hover:bg-blue-200 border-1 dark:border-amber-50 shadow-2xl border-blue-950">
-              {/* Jika ada gambar avatar, bisa ditampilkan di sini */}
               <AvatarImage src="https://api.dicebear.com/9.x/adventurer/svg?seed=Brooklynn&flip=true" alt="avatar" />
               <AvatarFallback>{initials || 'U'}</AvatarFallback>
             </Avatar>

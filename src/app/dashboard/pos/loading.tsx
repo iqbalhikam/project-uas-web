@@ -1,5 +1,3 @@
-// src/app/dashboard/pos/loading.tsx
-
 import { Skeleton } from '@/components/ui/skeleton';
 import {  CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 

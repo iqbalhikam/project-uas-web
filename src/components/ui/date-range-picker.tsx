@@ -1,4 +1,3 @@
-// components/ui/date-range-picker.tsx
 'use client';
 
 import * as React from 'react';
@@ -17,7 +16,7 @@ export function DateRangePicker({ className }: React.HTMLAttributes<HTMLDivEleme
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Ambil tanggal dari URL atau set default
+  
   const fromParam = searchParams.get('from');
   const toParam = searchParams.get('to');
 
@@ -29,7 +28,7 @@ export function DateRangePicker({ className }: React.HTMLAttributes<HTMLDivEleme
     to: defaultTo,
   });
 
-  // Fungsi untuk update URL saat tanggal berubah
+  
   const handleDateChange = (newDate: DateRange | undefined) => {
     setDate(newDate);
 

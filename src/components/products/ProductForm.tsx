@@ -17,7 +17,7 @@ import { Loader2Icon, ScanLine } from 'lucide-react';
 import { createProduct, updateProduct } from '@/lib/actions/product.actions';
 import ProductSchema from '@/lib/schemas/product.schema';
 
-// Impor dinamis untuk CameraScanner, memastikan tidak di-render di server
+
 const CameraScanner = dynamic(() => import('@/components/scanner/CameraScanner'), {
   ssr: false,
 });
@@ -30,7 +30,7 @@ interface ProductFormProps {
 
 export function ProductForm({ categories, product, onClose }: ProductFormProps) {
   const router = useRouter();
-  // State untuk mengontrol visibilitas scanner, sekarang ada di dalam form
+  
   const [isScannerOpen, setIsScannerOpen] = useState(false);
 
   const form = useForm<z.infer<typeof ProductSchema>>({
@@ -46,12 +46,12 @@ export function ProductForm({ categories, product, onClose }: ProductFormProps) 
     },
   });
 
-  // Callback untuk menangani hasil scan dan menutup scanner
+  
   const handleScanSuccess = useCallback(
     (scannedSku: string) => {
       form.setValue('sku', scannedSku, { shouldValidate: true });
       toast.info(`SKU diatur ke: ${scannedSku}`);
-      setIsScannerOpen(false); // Tutup scanner setelah sukses
+      setIsScannerOpen(false); 
     },
     [form]
   );
