@@ -134,7 +134,7 @@ export function PosClient({ products, promotions }: PosClientProps) {
 
   const handleScanSuccess = (scannedSku: string) => {
     setIsScannerOpen(false); 
-    const product = products.find((p) => p.sku === scannedSku);
+    const product = products.find((p) => p.sku.trim() === scannedSku.trim()); 
     if (product) {
       addToCart(product);
       toast.success(`Produk "${product.name}" ditambahkan ke keranjang.`);
