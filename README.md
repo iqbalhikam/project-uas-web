@@ -17,7 +17,7 @@ Proyek ini dibuat sebagai implementasi dari konsep-konsep terbaru dalam pengemba
 
 <div align="center">
   <img src="./videokasirpintar-ezgif.com-video-to-gif-converter.gif" alt="Screenshot KasirApp" style="border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-  <p><small><i>(Ganti gambar ini dengan screenshot aplikasi Anda)</i></small></p>
+  <p><small><i>Gambar tampilan dashboard</i></small></p>
 </div>
 
 <br/>
