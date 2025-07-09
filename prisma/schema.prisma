@@ -1,7 +1,7 @@
-// 1. Konfigurasi Koneksi Database dan Generator Prisma Client
+
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") // Mengambil URL dari file .env
+  url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -9,9 +9,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// ---------------------------------------------
-// Tipe Data Enumerasi (Enum) untuk konsistensi
-// ---------------------------------------------
+
 enum Role {
   ADMIN
   CASHIER
@@ -31,15 +29,12 @@ enum PaymentMethod {
 }
 
 enum StockMovementType {
-  PURCHASE // Stok masuk dari pembelian
-  SALE     // Stok keluar karena penjualan
-  ADJUSTMENT // Penyesuaian manual (misal: stok opname)
+  PURCHASE 
+  SALE     
+  ADJUSTMENT 
 }
 
 
-// ---------------------------------------------
-// TABEL MASTER (Data Acuan Utama)
-// ---------------------------------------------
 
 model User {
   id        String   @id @default(cuid()) @map("id")
@@ -60,12 +55,12 @@ model Category {
   createdAt  DateTime    @default(now()) @map("createdAt")
   updatedAt  DateTime    @updatedAt @map("updatedAt")
   products   Product[]
-  promotions Promotion[] // <-- Tambahan relasi ke Promotion
+  promotions Promotion[] 
 
   @@map("categories")
 }
 
-// ---- TABEL BARU ----
+
 model Promotion {
   id              String    @id @default(cuid())
   description     String
@@ -74,7 +69,7 @@ model Promotion {
   endDate         DateTime
   isActive        Boolean   @default(true)
   
-  // Relasi opsional ke Kategori, agar diskon bisa berlaku per kategori
+
   categoryId      String?
   category        Category? @relation(fields: [categoryId], references: [id])
 
@@ -116,13 +111,12 @@ model Product {
 
 model Sale {
   id            String        @id @default(cuid()) @map("id")
-  invoiceNumber String        @unique @default(cuid()) @map("invoiceNumber") // Menggunakan CUID sebagai default nomor nota
+  invoiceNumber String        @unique @default(cuid()) @map("invoiceNumber") 
   saleDate      DateTime      @default(now()) @map("saleDate")
   totalAmount   Float         @map("totalAmount")
   paymentMethod PaymentMethod @map("paymentMethod")
   
-  // --- PERUBAHAN DI SINI ---
-  // Relasi ke Customer dihapus
+
   
   userId        String        @map("userId")
   user          User          @relation(fields: [userId], references: [id])
@@ -178,7 +172,7 @@ model StockMovement {
   productId      String            @map("productId")
   product        Product           @relation(fields: [productId], references: [id])
   
-  // Relasi opsional, tergantung jenis pergerakan
+
   saleId         String?           @map("saleId")
   purchaseOrderId String?          @map("purchaseOrderId")
   purchaseOrder  PurchaseOrder?    @relation(fields: [purchaseOrderId], references: [id])
